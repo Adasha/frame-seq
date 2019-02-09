@@ -1,0 +1,35 @@
+<!doctype>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>anim-element POC</title>
+    <style>
+
+        frame-anim > *
+        {
+            font: bold 40pt/1 Arial, sans-serif;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <frame-anim width="320" height="320" autoplay loop>
+        <span>0</span>
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>5</span>
+        <span>6</span>
+        <span>7</span>
+        <span>8</span>
+        <span>9</span>
+    </frame-anim>
+
+    <script src="../src/HTMLAnimElement.js"></script>
+    <script>
+        let anim = document.querySelector('frame-anim');
+    </script>
+</body>
+</html>

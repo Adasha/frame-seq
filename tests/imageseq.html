@@ -5,7 +5,7 @@
     <title>anim-element POC</title>
 </head>
 <body>
-    <frame-anim width="320" height="320" autoplay loop>
+    <frame-anim width="320" height="320" fps="12" foo="bar" autoplay loop>
         <img src="walk/walk0001.png" width="320" height="320" alt="">
         <img src="walk/walk0002.png" width="320" height="320" alt="">
         <img src="walk/walk0003.png" width="320" height="320" alt="">
@@ -19,6 +19,8 @@
     <script src="../src/HTMLAnimElement.js"></script>
     <script>
         let anim = document.querySelector('frame-anim');
+        anim.setAttribute('foo', 'bar');
+        console.log(typeof anim.getAttribute('fps'));
     </script>
 </body>
 </html>

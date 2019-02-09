@@ -8,7 +8,9 @@ let _frames = [],
     _currentFrame = 0,
     _totalFrames,
     _fps,
-    _duration;
+    _duration,
+    _width = 0,
+    _height = 0;
 
 let _autoplay = false,
     _loop = false,
@@ -18,15 +20,26 @@ let _autoplay = false,
 
 
 
+/**
+ * Class representing a HTMLAnimElement.
+ * @extends HTMLElement
+ */
 class HTMLAnimElement extends HTMLElement
 {
-    constructor()
+    static get observedAttributes() {
+        return ['autoplay', 'fps', 'height', 'loop', 'pingpong', 'reverse', 'src', 'width'];
+    }
+
+    /**
+     * Create a new HTMLAnimElement.
+     */
+    constructor(...args)
     {
-        super();
+        super(...args);
 
 /*
-        const shadowRoot = this.attachShadow({mode: 'open'});
-        shadowRoot.innerHTML = `
+        var shadow = this.attachShadow({mode: 'open'});
+        shadow.innerHTML = `
             <style>
                 frame-anim
                 {
@@ -40,8 +53,161 @@ class HTMLAnimElement extends HTMLElement
         this.redraw = this.redraw.bind(this);
     }
 
-    static get observedAttributes() {
-        return ['autoplay', 'fps', 'height', 'loop', 'pingpong', 'reverse', 'src', 'width'];
+
+
+
+    // PROPERTIES
+
+
+
+    get currentFrame()
+    {
+        return _currentFrame;
+    }
+
+    set currentFrame(num)
+    {
+        _currentFrame = num;
+    }
+
+
+
+    get totalFrames()
+    {
+        return _frames.length;
+    }
+
+
+
+    get fps()
+    {
+        return this.getAttribute('fps');
+    }
+
+    set fps(value)
+    {
+        console.log('hfxhfdx');
+        this.setAttribute('fps', value);
+        let v = Number(value);
+        if(isNaN(v)) throw new Error(`${value} is not a number.`);
+        if(v<=0) throw new Error(`FPS must be a positive number.`);
+        _fps = v+1;
+    }
+
+
+
+    get duration()
+    {
+        return this.totalFrames/this.FPS;
+    }
+
+
+
+    get autoplay()
+    {
+        return _autoplay;
+    }
+
+    set autoplay(bool)
+    {
+        _autoplay = !!bool;
+    }
+
+
+
+    get loop()
+    {
+        return _loop;
+    }
+
+    set loop(bool)
+    {
+        _loop = !!bool;
+    }
+
+
+
+    get reverse()
+    {
+        return _reverse;
+    }
+
+    set reverse(bool)
+    {
+        _reverse = !!bool;
+    }
+
+
+
+    get pingpong()
+    {
+        return _pingpong;
+    }
+
+    set pingpong(bool)
+    {
+        _pingpong = !!bool;
+    }
+
+
+
+    get direction()
+    {
+        return null; // TODO: ;
+    }
+
+
+
+    get width()
+    {
+        return _width;
+    }
+
+    set width(value)
+    {
+        _width = value;
+    }
+
+
+
+    get height()
+    {
+        return _height;
+    }
+
+    set height(value)
+    {
+        _height = value;
+    }
+
+
+
+    //METHODS
+
+    play()
+    {
+    }
+
+    stop()
+    {
+    }
+
+
+    gotoAndPlay(frame)
+    {
+    }
+
+    gotoAndStop(frame)
+    {
+    }
+
+
+    nextFrame()
+    {
+    }
+
+    prevFrame()
+    {
     }
 
 
@@ -61,27 +227,8 @@ class HTMLAnimElement extends HTMLElement
 
     attributeChangedCallback(name, oldValue, newValue)
     {
-        switch(name)
-        {
-            case 'width' :
-                break;
-            case 'height' :
-                break;
-            case 'autoplay' :
-                this.autoplay = true;
-                break;
-            case 'loop' :
-                this.loop = true;
-                break;
-            case 'reverse' :
-                break;
-            case 'fps' :
-                break;
-            case 'src' :
-                break;
-            default :
-                console.log(`Invalid attribute ${name}`);
-        }
+        if(!(name in this)) throw new Error(`${name} is not a recognised attribute.`);
+        else this[name] = newValue;
     }
 
     redraw(timestamp)
@@ -90,84 +237,6 @@ class HTMLAnimElement extends HTMLElement
         this.appendChild(_frames[this.currentFrame]);
         this.currentFrame = (++this.currentFrame)%this.totalFrames;
     }
- 
 
-
-
-    // PROPERTIES
-
-
-
-    get currentFrame()
-    {
-        return _currentFrame;
-    }
-
-    set currentFrame(num)
-    {
-        _currentFrame = num;
-    }
-
-
-    get totalFrames()
-    {
-        return _frames.length;
-    }
-
-
-    get FPS()
-    {
-        return _fps;
-    }
-
-    set FPS(num)
-    {
-        _fps = num;
-    }
-
-    get duration()
-    {
-        return;
-    }
-
-    get autoplay()
-    {
-        return _autoplay;
-    }
-
-    set autoplay(bool)
-    {
-        _autoplay = bool;
-    }
-
-    get loop()
-    {
-        return _loop;
-    }
-
-    set loop(bool)
-    {
-        _loop = bool;
-    }
-
-
-
-    //METHODS
-
-    play()
-    {
-    }
-
-    stop()
-    {
-    }
-
-    gotoAndPlay(frame)
-    {
-    }
-
-    gotoAndStop(frame)
-    {
-    }
 }
 customElements.define('frame-anim', HTMLAnimElement);
