@@ -1,31 +1,28 @@
-
-
-const DEFAULT_FPS = 30;
-
-
-
-let _frames = [],
-    _currentFrame = 0,
-    _totalFrames,
-    _fps,
-    _duration,
-    _width = 0,
-    _height = 0;
-
-let _autoplay = false,
-    _loop = false,
-    _reverse = false,
-    _pingpong = false;
-
-
-
-
 /**
  * Class representing a HTMLAnimElement.
  * @extends HTMLElement
  */
 class HTMLAnimElement extends HTMLElement
 {
+    #DEFAULT_FPS = 30;
+
+
+    #frames = [];
+    #currentFrame = 0;
+    #totalFrames;
+    #fps;
+    #duration;
+    #width = 0;
+    #height = 0;
+
+
+    #autoplay = false;
+    #loop = false;
+    #reverse = false;
+    #pingpong = false;
+
+
+
     static get observedAttributes() {
         return ['autoplay', 'fps', 'height', 'loop', 'pingpong', 'reverse', 'src', 'width'];
     }
@@ -62,19 +59,19 @@ class HTMLAnimElement extends HTMLElement
 
     get currentFrame()
     {
-        return _currentFrame;
+        return this.#currentFrame;
     }
 
     set currentFrame(num)
     {
-        _currentFrame = num;
+        this.#currentFrame = num;
     }
 
 
 
     get totalFrames()
     {
-        return _frames.length;
+        return this.#frames.length;
     }
 
 
@@ -91,7 +88,7 @@ class HTMLAnimElement extends HTMLElement
         let v = Number(value);
         if(isNaN(v)) throw new Error(`${value} is not a number.`);
         if(v<=0) throw new Error(`FPS must be a positive number.`);
-        _fps = v+1;
+        this.#fps = v+1;
     }
 
 
@@ -105,48 +102,48 @@ class HTMLAnimElement extends HTMLElement
 
     get autoplay()
     {
-        return _autoplay;
+        return this.#autoplay;
     }
 
     set autoplay(bool)
     {
-        _autoplay = !!bool;
+        this.#autoplay = !!bool;
     }
 
 
 
     get loop()
     {
-        return _loop;
+        return this.#loop;
     }
 
     set loop(bool)
     {
-        _loop = !!bool;
+        this.#loop = !!bool;
     }
 
 
 
     get reverse()
     {
-        return _reverse;
+        return this.#reverse;
     }
 
     set reverse(bool)
     {
-        _reverse = !!bool;
+        this.#reverse = !!bool;
     }
 
 
 
     get pingpong()
     {
-        return _pingpong;
+        return this.#pingpong;
     }
 
     set pingpong(bool)
     {
-        _pingpong = !!bool;
+        this.#pingpong = !!bool;
     }
 
 
@@ -160,24 +157,24 @@ class HTMLAnimElement extends HTMLElement
 
     get width()
     {
-        return _width;
+        return this.#width;
     }
 
     set width(value)
     {
-        _width = value;
+        this.#width = value;
     }
 
 
 
     get height()
     {
-        return _height;
+        return this.#height;
     }
 
     set height(value)
     {
-        _height = value;
+        this.#height = value;
     }
 
 
@@ -215,7 +212,7 @@ class HTMLAnimElement extends HTMLElement
     {
         while(this.children.length>0)
         {
-            _frames.push(this.removeChild(this.children[0]));
+            this.#frames.push(this.removeChild(this.children[0]));
         }
 
         let frameTimer = window.setInterval(() => window.requestAnimationFrame(this.redraw), 100);
@@ -234,7 +231,7 @@ class HTMLAnimElement extends HTMLElement
     redraw(timestamp)
     {
         if(this.firstChild) while(this.firstChild) this.removeChild(this.lastChild);
-        this.appendChild(_frames[this.currentFrame]);
+        this.appendChild(this.#frames[this.currentFrame]);
         this.currentFrame = (++this.currentFrame)%this.totalFrames;
     }
 
