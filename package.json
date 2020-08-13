@@ -1,8 +1,7 @@
 {
   "name": "anim-element",
-  "version": "0.0.2a",
+  "version": "0.1.0a",
   "description": "",
-  "main": "src/canvideo.js",
   "dependencies": {
     "@babel/polyfill": "^7.10.4"
   },

@@ -4,13 +4,14 @@
  */
 class HTMLAnimElement extends HTMLElement
 {
-    #DEFAULT_FPS = 30;
+    #DEFAULT_FPS = 15;
 
 
     #frames = [];
     #currentFrame = 0;
     #totalFrames;
     #fps;
+    #frameTimer;
     #duration;
     #width = 0;
     #height = 0;
@@ -24,7 +25,7 @@ class HTMLAnimElement extends HTMLElement
 
 
     static get observedAttributes() {
-        return ['autoplay', 'fps', 'height', 'loop', 'pingpong', 'reverse', 'src', 'width'];
+        return ['autoplay', 'firstframe', 'fps', 'height', 'loop', 'pingpong', 'reverse', 'src', 'width'];
     }
 
     /**
@@ -64,7 +65,22 @@ class HTMLAnimElement extends HTMLElement
 
     set currentFrame(num)
     {
+        if(isNaN(num))
+        {
+            throw new TypeError('Frame number must be a number.');
+        }
+        if(Math.floor(num)!==num)
+        {
+            console.log('WARN: frame number must be an integer. Fraction discarded.');
+            num = Math.floor(num);
+        }
+        if(num<0 || num>=this.totalFrames)
+        {
+            console.log('WARN: frame number out of range. Closest value used.');
+            num = Math.max(0, num)%this.totalFrames;
+        }
         this.#currentFrame = num;
+        window.requestAnimationFrame(this.redraw);
     }
 
 
@@ -83,67 +99,98 @@ class HTMLAnimElement extends HTMLElement
 
     set fps(value)
     {
-        console.log('hfxhfdx');
+        if(isNaN(value))
+        {
+            throw new TypeError('FPS must be a number.');
+        }
         this.setAttribute('fps', value);
-        let v = Number(value);
-        if(isNaN(v)) throw new Error(`${value} is not a number.`);
-        if(v<=0) throw new Error(`FPS must be a positive number.`);
-        this.#fps = v+1;
+        if(this.#frameTimer)
+        {
+            this.resume();
+        }
     }
 
 
 
     get duration()
     {
-        return this.totalFrames/this.FPS;
+        return this.totalFrames/this.fps;
     }
 
 
 
     get autoplay()
     {
-        return this.#autoplay;
+        return this.hasAttribute('autoplay');
     }
 
     set autoplay(bool)
     {
-        this.#autoplay = !!bool;
+        if(!!bool)
+        {
+            this.setAttribute('autoplay', '');
+        }
+        else
+        {
+            this.removeAttribute('autoplay');
+        }
     }
 
 
 
     get loop()
     {
-        return this.#loop;
+        return this.hasAttribute('loop');
     }
 
     set loop(bool)
     {
-        this.#loop = !!bool;
+        if(!!bool)
+        {
+            this.setAttribute('loop', '');
+        }
+        else
+        {
+            this.removeAttribute('loop');
+        }
     }
 
 
 
     get reverse()
     {
-        return this.#reverse;
+        return this.hasAttribute('reverse');
     }
 
     set reverse(bool)
     {
-        this.#reverse = !!bool;
+        if(!!bool)
+        {
+            this.setAttribute('reverse', '');
+        }
+        else
+        {
+            this.removeAttribute('reverse');
+        }
     }
 
 
 
     get pingpong()
     {
-        return this.#pingpong;
+        return this.hasAttribute('pingpong');
     }
 
     set pingpong(bool)
     {
-        this.#pingpong = !!bool;
+        if(!!bool)
+        {
+            this.setAttribute('pingpong', '');
+        }
+        else
+        {
+            this.removeAttribute('pingpong');
+        }
     }
 
 
@@ -157,24 +204,24 @@ class HTMLAnimElement extends HTMLElement
 
     get width()
     {
-        return this.#width;
+        return this.getAttribute('width');
     }
 
     set width(value)
     {
-        this.#width = value;
+        this.setAttribute('width', value);
     }
 
 
 
     get height()
     {
-        return this.#height;
+        return this.getAttribute('height');
     }
 
     set height(value)
     {
-        this.#height = value;
+        this.setAttribute('height', value);
     }
 
 
@@ -183,28 +230,48 @@ class HTMLAnimElement extends HTMLElement
 
     play()
     {
+        this.currentFrame = this.reverse ? this.totalFrames-1 : 0;
+        this.#startTimer();
+    }
+
+    pause()
+    {
+        this.#clearTimer();
+    }
+
+    resume()
+    {
+        this.#startTimer();
     }
 
     stop()
     {
+        this.#clearTimer();
+        this.currentFrame = this.reverse ? this.totalFrames-1 : 0;
     }
 
 
     gotoAndPlay(frame)
     {
+        this.currentFrame = frame;
+        this.resume();
     }
 
-    gotoAndStop(frame)
+    gotoAndPause(frame)
     {
+        this.currentFrame = frame;
+        this.pause();
     }
 
 
     nextFrame()
     {
+        ++this.currentFrame;
     }
 
     prevFrame()
     {
+        --this.currentFrame;
     }
 
 
@@ -214,8 +281,15 @@ class HTMLAnimElement extends HTMLElement
         {
             this.#frames.push(this.removeChild(this.children[0]));
         }
-
-        let frameTimer = window.setInterval(() => window.requestAnimationFrame(this.redraw), 100);
+        
+        if(this.autoplay)
+        {
+            this.play();
+        }
+        else
+        {
+            this.stop();
+        }
     }
 
     disconnectedCallback()
@@ -225,15 +299,80 @@ class HTMLAnimElement extends HTMLElement
     attributeChangedCallback(name, oldValue, newValue)
     {
         if(!(name in this)) throw new Error(`${name} is not a recognised attribute.`);
-        else this[name] = newValue;
+        //else this[name] = newValue;
     }
+
+
+
+    #startTimer()
+    {
+        this.#clearTimer();
+
+        let fps = this.fps ? this.fps : this.#DEFAULT_FPS,
+            ms  = Math.floor(1000 / fps);
+        
+        this.#frameTimer = window.setInterval(() => this.#update(), ms);
+    }
+
+    #clearTimer()
+    {
+        if(this.#frameTimer)
+        {
+            window.clearInterval(this.#frameTimer);
+            this.#frameTimer = null;
+        }
+    }
+
+
+    #update()
+    {
+        let cf = this.reverse ? this.currentFrame-1 : this.currentFrame+1,
+            tf = this.totalFrames - 1;
+
+        if(this.reverse)
+        {
+            if(cf<0 && this.loop)
+            {
+                cf = tf;
+            }
+        }
+        else
+        {
+            if(cf>tf && this.loop)
+            {
+                cf = 0;
+            }
+        }
+
+        this.currentFrame = cf;
+        //enterFrame event here
+    }
+
 
     redraw(timestamp)
     {
-        if(this.firstChild) while(this.firstChild) this.removeChild(this.lastChild);
+        this.#clearFrames();
+
+        //render event here?
+
         this.appendChild(this.#frames[this.currentFrame]);
-        this.currentFrame = (++this.currentFrame)%this.totalFrames;
+
+        this.#cleanUp();
     }
+
+    #clearFrames()
+    {
+        while(this.firstChild)
+        {
+            this.removeChild(this.lastChild);
+        }
+    }
+
+    #cleanUp()
+    {
+
+    }
+    
 
 }
 customElements.define('frame-anim', HTMLAnimElement);

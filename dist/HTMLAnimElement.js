@@ -28,6 +28,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return fn; }
+
 function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = privateMap.get(receiver); if (!descriptor) { throw new TypeError("attempted to set private field on non-instance"); } if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } return value; }
 
 function _classPrivateFieldGet(receiver, privateMap) { var descriptor = privateMap.get(receiver); if (!descriptor) { throw new TypeError("attempted to get private field on non-instance"); } if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
@@ -41,6 +43,8 @@ var _currentFrame = new WeakMap();
 var _totalFrames = new WeakMap();
 
 var _fps = new WeakMap();
+
+var _frameTimer = new WeakMap();
 
 var _duration = new WeakMap();
 
@@ -56,6 +60,16 @@ var _reverse = new WeakMap();
 
 var _pingpong = new WeakMap();
 
+var _startTimer = new WeakSet();
+
+var _clearTimer = new WeakSet();
+
+var _update = new WeakSet();
+
+var _clearFrames = new WeakSet();
+
+var _cleanUp = new WeakSet();
+
 /**
  * Class representing a HTMLAnimElement.
  * @extends HTMLElement
@@ -68,7 +82,7 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
   _createClass(HTMLAnimElement, null, [{
     key: "observedAttributes",
     get: function get() {
-      return ['autoplay', 'fps', 'height', 'loop', 'pingpong', 'reverse', 'src', 'width'];
+      return ['autoplay', 'firstframe', 'fps', 'height', 'loop', 'pingpong', 'reverse', 'src', 'width'];
     }
     /**
      * Create a new HTMLAnimElement.
@@ -100,9 +114,19 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
             `;
             */
 
+    _cleanUp.add(_assertThisInitialized(_this));
+
+    _clearFrames.add(_assertThisInitialized(_this));
+
+    _update.add(_assertThisInitialized(_this));
+
+    _clearTimer.add(_assertThisInitialized(_this));
+
+    _startTimer.add(_assertThisInitialized(_this));
+
     _DEFAULT_FPS.set(_assertThisInitialized(_this), {
       writable: true,
-      value: 30
+      value: 15
     });
 
     _frames.set(_assertThisInitialized(_this), {
@@ -121,6 +145,11 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
     });
 
     _fps.set(_assertThisInitialized(_this), {
+      writable: true,
+      value: void 0
+    });
+
+    _frameTimer.set(_assertThisInitialized(_this), {
       writable: true,
       value: void 0
     });
@@ -168,34 +197,62 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
   _createClass(HTMLAnimElement, [{
     key: "play",
     //METHODS
-    value: function play() {}
+    value: function play() {
+      this.currentFrame = this.reverse ? this.totalFrames - 1 : 0;
+
+      _classPrivateMethodGet(this, _startTimer, _startTimer2).call(this);
+    }
+  }, {
+    key: "pause",
+    value: function pause() {
+      _classPrivateMethodGet(this, _clearTimer, _clearTimer2).call(this);
+    }
+  }, {
+    key: "resume",
+    value: function resume() {
+      _classPrivateMethodGet(this, _startTimer, _startTimer2).call(this);
+    }
   }, {
     key: "stop",
-    value: function stop() {}
+    value: function stop() {
+      _classPrivateMethodGet(this, _clearTimer, _clearTimer2).call(this);
+
+      this.currentFrame = this.reverse ? this.totalFrames - 1 : 0;
+    }
   }, {
     key: "gotoAndPlay",
-    value: function gotoAndPlay(frame) {}
+    value: function gotoAndPlay(frame) {
+      this.currentFrame = frame;
+      this.resume();
+    }
   }, {
-    key: "gotoAndStop",
-    value: function gotoAndStop(frame) {}
+    key: "gotoAndPause",
+    value: function gotoAndPause(frame) {
+      this.currentFrame = frame;
+      this.pause();
+    }
   }, {
     key: "nextFrame",
-    value: function nextFrame() {}
+    value: function nextFrame() {
+      ++this.currentFrame;
+    }
   }, {
     key: "prevFrame",
-    value: function prevFrame() {}
+    value: function prevFrame() {
+      --this.currentFrame;
+    }
   }, {
     key: "connectedCallback",
     value: function connectedCallback() {
-      var _this2 = this;
-
       while (this.children.length > 0) {
         _classPrivateFieldGet(this, _frames).push(this.removeChild(this.children[0]));
       }
 
-      var frameTimer = window.setInterval(function () {
-        return window.requestAnimationFrame(_this2.redraw);
-      }, 100);
+      if (this.autoplay) {
+        this.play();
+      } else {
+        this.stop();
+      }
     }
   }, {
     key: "disconnectedCallback",
@@ -203,16 +260,17 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
   }, {
     key: "attributeChangedCallback",
     value: function attributeChangedCallback(name, oldValue, newValue) {
-      if (!(name in this)) throw new Error("".concat(name, " is not a recognised attribute."));else this[name] = newValue;
+      if (!(name in this)) throw new Error("".concat(name, " is not a recognised attribute.")); //else this[name] = newValue;
     }
   }, {
     key: "redraw",
     value: function redraw(timestamp) {
-      if (this.firstChild) while (this.firstChild) {
-        this.removeChild(this.lastChild);
-      }
+      _classPrivateMethodGet(this, _clearFrames, _clearFrames2).call(this); //render event here?
+
+
       this.appendChild(_classPrivateFieldGet(this, _frames)[this.currentFrame]);
-      this.currentFrame = ++this.currentFrame % this.totalFrames;
+
+      _classPrivateMethodGet(this, _cleanUp, _cleanUp2).call(this);
     }
   }, {
     key: "currentFrame",
@@ -220,7 +278,23 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
       return _classPrivateFieldGet(this, _currentFrame);
     },
     set: function set(num) {
+      if (isNaN(num)) {
+        throw new TypeError('Frame number must be a number.');
+      }
+
+      if (Math.floor(num) !== num) {
+        console.log('WARN: frame number must be an integer. Fraction discarded.');
+        num = Math.floor(num);
+      }
+
+      if (num < 0 || num >= this.totalFrames) {
+        console.log('WARN: frame number out of range. Closest value used.');
+        num = Math.max(0, num) % this.totalFrames;
+      }
+
       _classPrivateFieldSet(this, _currentFrame, num);
+
+      window.requestAnimationFrame(this.redraw);
     }
   }, {
     key: "totalFrames",
@@ -233,50 +307,70 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
       return this.getAttribute('fps');
     },
     set: function set(value) {
-      console.log('hfxhfdx');
-      this.setAttribute('fps', value);
-      var v = Number(value);
-      if (isNaN(v)) throw new Error("".concat(value, " is not a number."));
-      if (v <= 0) throw new Error("FPS must be a positive number.");
+      console.log(value);
 
-      _classPrivateFieldSet(this, _fps, v + 1);
+      if (isNaN(value)) {
+        throw new TypeError('FPS must be a number.');
+      }
+
+      this.setAttribute('fps', value);
+
+      if (_classPrivateFieldGet(this, _frameTimer)) {
+        this.resume();
+      }
     }
   }, {
     key: "duration",
     get: function get() {
-      return this.totalFrames / this.FPS;
+      return this.totalFrames / this.fps;
     }
   }, {
     key: "autoplay",
     get: function get() {
-      return _classPrivateFieldGet(this, _autoplay);
+      return this.hasAttribute('autoplay');
     },
     set: function set(bool) {
-      _classPrivateFieldSet(this, _autoplay, !!bool);
+      if (!!bool) {
+        this.setAttribute('autoplay', '');
+      } else {
+        this.removeAttribute('autoplay');
+      }
     }
   }, {
     key: "loop",
     get: function get() {
-      return _classPrivateFieldGet(this, _loop);
+      return this.hasAttribute('loop');
     },
     set: function set(bool) {
-      _classPrivateFieldSet(this, _loop, !!bool);
+      if (!!bool) {
+        this.setAttribute('loop', '');
+      } else {
+        this.removeAttribute('loop');
+      }
     }
   }, {
     key: "reverse",
     get: function get() {
-      return _classPrivateFieldGet(this, _reverse);
+      return this.hasAttribute('reverse');
     },
     set: function set(bool) {
-      _classPrivateFieldSet(this, _reverse, !!bool);
+      if (!!bool) {
+        this.setAttribute('reverse', '');
+      } else {
+        this.removeAttribute('reverse');
+      }
     }
   }, {
     key: "pingpong",
     get: function get() {
-      return _classPrivateFieldGet(this, _pingpong);
+      return this.hasAttribute('pingpong');
     },
     set: function set(bool) {
-      _classPrivateFieldSet(this, _pingpong, !!bool);
+      if (!!bool) {
+        this.setAttribute('pingpong', '');
+      } else {
+        this.removeAttribute('pingpong');
+      }
     }
   }, {
     key: "direction",
@@ -286,22 +380,68 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
   }, {
     key: "width",
     get: function get() {
-      return _classPrivateFieldGet(this, _width);
+      return this.getAttribute('width');
     },
     set: function set(value) {
-      _classPrivateFieldSet(this, _width, value);
+      this.setAttribute('width', value);
     }
   }, {
     key: "height",
     get: function get() {
-      return _classPrivateFieldGet(this, _height);
+      return this.getAttribute('height');
     },
     set: function set(value) {
-      _classPrivateFieldSet(this, _height, value);
+      this.setAttribute('height', value);
     }
   }]);
 
   return HTMLAnimElement;
 }( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
+
+var _startTimer2 = function _startTimer2() {
+  var _this2 = this;
+
+  _classPrivateMethodGet(this, _clearTimer, _clearTimer2).call(this);
+
+  var fps = this.fps ? this.fps : _classPrivateFieldGet(this, _DEFAULT_FPS),
+      ms = Math.floor(1000 / fps);
+
+  _classPrivateFieldSet(this, _frameTimer, window.setInterval(function () {
+    return _classPrivateMethodGet(_this2, _update, _update2).call(_this2);
+  }, ms));
+};
+
+var _clearTimer2 = function _clearTimer2() {
+  if (_classPrivateFieldGet(this, _frameTimer)) {
+    window.clearInterval(_classPrivateFieldGet(this, _frameTimer));
+
+    _classPrivateFieldSet(this, _frameTimer, null);
+  }
+};
+
+var _update2 = function _update2() {
+  var cf = this.reverse ? this.currentFrame - 1 : this.currentFrame + 1,
+      tf = this.totalFrames - 1;
+
+  if (this.reverse) {
+    if (cf < 0 && this.loop) {
+      cf = tf;
+    }
+  } else {
+    if (cf > tf && this.loop) {
+      cf = 0;
+    }
+  }
+
+  this.currentFrame = cf; //enterFrame event here
+};
+
+var _clearFrames2 = function _clearFrames2() {
+  while (this.firstChild) {
+    this.removeChild(this.lastChild);
+  }
+};
+
+var _cleanUp2 = function _cleanUp2() {};
 
 customElements.define('frame-anim', HTMLAnimElement);
