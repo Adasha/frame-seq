@@ -29,9 +29,9 @@
                 <button id="playrev-button">&#9204;</button>
                 <button id="pause-button">&#9208;</button>
                 <button id="play-button">&#9205;</button>
-                <button id="stop-button">&#9209;</button>
                 <button id="nextframe-button">&gt;</button>
                 <button id="lastframe-button">&gt;|</button>
+                <button id="stop-button">&#9209;</button>
                 <br>
                 <label for="frame-scrubber">Frame:</label>
                 <input type="range" min="0" id="frame-scrubber">
@@ -47,9 +47,14 @@
 
             let anim = document.getElementById('test');
 
-            let playrevButton = document.getElementById('playrev-button'),
+            let firstframeButton = document.getElementById('firstframe-button'),
+                prevframeButton = document.getElementById('prevframe-button'),
+                playrevButton = document.getElementById('playrev-button'),
+                pauseButton = document.getElementById('pause-button'),
                 playButton = document.getElementById('play-button'),
-                lastframeButton = document.getElementById('lastframe-button');
+                nextframeButton = document.getElementById('nextframe-button'),
+                lastframeButton = document.getElementById('lastframe-button'),
+                stopButton = document.getElementById('stop-button');
 
             let frameScrubber = document.getElementById('frame-scrubber'),
                 frameCounter = document.getElementById('frame-counter');
@@ -70,7 +75,53 @@
                 frameScrubber.value = anim.currentFrame;
                 frameCounter.innerHTML = (anim.currentFrame+1) + '/' + anim.totalFrames + ' @' + anim.fps + 'fps';
             });
+            anim.addEventListener('stateChanged', () => {
+                if(anim.paused)
+                {
+                    pauseButton.style = 'background-color: #ff0';
+                }
+                else
+                {
+                    pauseButton.style = 'background-color: inherit';
+                }
+            });
 
+
+            firstframeButton.addEventListener('click', () => {
+                anim.gotoAndPause(0);
+            });
+            prevframeButton.addEventListener('click', () => {
+                anim.prevFrame();
+            });
+            playrevButton.addEventListener('click', () => {
+                anim.reverse = true;
+                anim.play();
+            });
+            pauseButton.addEventListener('click', () => {
+                if(anim.paused)
+                {
+                    anim.resume();
+                }
+                else
+                {
+                    anim.pause();
+                }
+            });
+            playButton.addEventListener('click', () => {
+                anim.reverse = false;
+                anim.play();
+            });
+            nextframeButton.addEventListener('click', () => {
+                anim.nextFrame();
+            });
+            lastframeButton.addEventListener('click', () => {
+                anim.gotoAndPause(anim.totalFrames-1);
+            });
+            stopButton.addEventListener('click', () => {
+                anim.stop();
+            });
+
+            
             loopCheck.addEventListener('change', () => {
                 anim.loop = loopCheck.checked;
             });

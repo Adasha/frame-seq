@@ -52,6 +52,12 @@ var _width = new WeakMap();
 
 var _height = new WeakMap();
 
+var _playing = new WeakMap();
+
+var _paused = new WeakMap();
+
+var _stopped = new WeakMap();
+
 var _autoplay = new WeakMap();
 
 var _loop = new WeakMap();
@@ -68,9 +74,9 @@ var _update = new WeakSet();
 
 var _clearFrames = new WeakSet();
 
-var _cleanUp = new WeakSet();
-
 var _clearStates = new WeakSet();
+
+var _cleanUp = new WeakSet();
 
 /**
  * Class representing a HTMLAnimElement.
@@ -116,9 +122,9 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
             `;
             */
 
-    _clearStates.add(_assertThisInitialized(_this));
-
     _cleanUp.add(_assertThisInitialized(_this));
+
+    _clearStates.add(_assertThisInitialized(_this));
 
     _clearFrames.add(_assertThisInitialized(_this));
 
@@ -173,6 +179,21 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
       value: 0
     });
 
+    _playing.set(_assertThisInitialized(_this), {
+      writable: true,
+      value: void 0
+    });
+
+    _paused.set(_assertThisInitialized(_this), {
+      writable: true,
+      value: void 0
+    });
+
+    _stopped.set(_assertThisInitialized(_this), {
+      writable: true,
+      value: void 0
+    });
+
     _autoplay.set(_assertThisInitialized(_this), {
       writable: true,
       value: false
@@ -205,16 +226,34 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
       this.currentFrame = this.reverse ? this.totalFrames - 1 : 0;
 
       _classPrivateMethodGet(this, _startTimer, _startTimer2).call(this);
+
+      _classPrivateMethodGet(this, _clearStates, _clearStates2).call(this);
+
+      _classPrivateFieldSet(this, _playing, true);
+
+      this.dispatchEvent(new Event('stateChanged'));
     }
   }, {
     key: "pause",
     value: function pause() {
       _classPrivateMethodGet(this, _clearTimer, _clearTimer2).call(this);
+
+      _classPrivateMethodGet(this, _clearStates, _clearStates2).call(this);
+
+      _classPrivateFieldSet(this, _paused, true);
+
+      this.dispatchEvent(new Event('stateChanged'));
     }
   }, {
     key: "resume",
     value: function resume() {
       _classPrivateMethodGet(this, _startTimer, _startTimer2).call(this);
+
+      _classPrivateMethodGet(this, _clearStates, _clearStates2).call(this);
+
+      _classPrivateFieldSet(this, _playing, true);
+
+      this.dispatchEvent(new Event('stateChanged'));
     }
   }, {
     key: "stop",
@@ -222,6 +261,12 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
       _classPrivateMethodGet(this, _clearTimer, _clearTimer2).call(this);
 
       this.currentFrame = this.reverse ? this.totalFrames - 1 : 0;
+
+      _classPrivateMethodGet(this, _clearStates, _clearStates2).call(this);
+
+      _classPrivateFieldSet(this, _stopped, true);
+
+      this.dispatchEvent(new Event('stateChanged'));
     }
   }, {
     key: "gotoAndPlay",
@@ -295,8 +340,6 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
         console.log('WARN: frame number out of range. Closest value used.');
         num = Math.max(0, num) % this.totalFrames;
       }
-
-      console.log(num);
 
       _classPrivateFieldSet(this, _currentFrame, num);
 
@@ -397,6 +440,16 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
     set: function set(value) {
       this.setAttribute('height', value);
     }
+  }, {
+    key: "playing",
+    get: function get() {
+      return _classPrivateFieldGet(this, _playing);
+    }
+  }, {
+    key: "paused",
+    get: function get() {
+      return _classPrivateFieldGet(this, _paused);
+    }
   }]);
 
   return HTMLAnimElement;
@@ -449,8 +502,14 @@ var _clearFrames2 = function _clearFrames2() {
   }
 };
 
-var _cleanUp2 = function _cleanUp2() {};
+var _clearStates2 = function _clearStates2() {
+  _classPrivateFieldSet(this, _playing, false);
 
-var _clearStates2 = function _clearStates2() {};
+  _classPrivateFieldSet(this, _paused, false);
+
+  _classPrivateFieldSet(this, _stopped, false);
+};
+
+var _cleanUp2 = function _cleanUp2() {};
 
 customElements.define('frame-anim', HTMLAnimElement);

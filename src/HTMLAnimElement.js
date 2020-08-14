@@ -16,6 +16,9 @@ class HTMLAnimElement extends HTMLElement
     #width = 0;
     #height = 0;
 
+    #playing;
+    #paused;
+    #stopped;
 
     #autoplay = false;
     #loop = false;
@@ -79,7 +82,6 @@ class HTMLAnimElement extends HTMLElement
             console.log('WARN: frame number out of range. Closest value used.');
             num = Math.max(0, num)%this.totalFrames;
         }
-        console.log(num);
         this.#currentFrame = num;
         window.requestAnimationFrame(this.redraw);
     }
@@ -227,28 +229,50 @@ class HTMLAnimElement extends HTMLElement
 
 
 
+    get playing()
+    {
+        return this.#playing;
+    }
+
+    get paused()
+    {
+        return this.#paused;
+    }
+
     //METHODS
 
     play()
     {
         this.currentFrame = this.reverse ? this.totalFrames-1 : 0;
         this.#startTimer();
+        this.#clearStates();
+        this.#playing = true;
+        this.dispatchEvent(new Event('stateChanged'));
     }
 
     pause()
     {
         this.#clearTimer();
+        this.#clearStates();
+        this.#paused = true;
+        this.dispatchEvent(new Event('stateChanged'));
     }
 
     resume()
     {
         this.#startTimer();
+        this.#clearStates();
+        this.#playing = true;
+        this.dispatchEvent(new Event('stateChanged'));
     }
 
     stop()
     {
         this.#clearTimer();
         this.currentFrame = this.reverse ? this.totalFrames-1 : 0;
+        this.#clearStates();
+        this.#stopped = true;
+        this.dispatchEvent(new Event('stateChanged'));
     }
 
 
@@ -370,6 +394,7 @@ class HTMLAnimElement extends HTMLElement
         this.#cleanUp();
     }
 
+
     #clearFrames()
     {
         while(this.firstChild)
@@ -378,15 +403,20 @@ class HTMLAnimElement extends HTMLElement
         }
     }
 
+
+    #clearStates()
+    {
+        this.#playing = false;
+        this.#paused = false;
+        this.#stopped = false;
+    }
+
+
     #cleanUp()
     {
 
     }
     
-    #clearStates()
-    {
-        
-    }
 
 }
 customElements.define('frame-anim', HTMLAnimElement);
