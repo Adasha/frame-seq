@@ -79,6 +79,7 @@ class HTMLAnimElement extends HTMLElement
             console.log('WARN: frame number out of range. Closest value used.');
             num = Math.max(0, num)%this.totalFrames;
         }
+        console.log(num);
         this.#currentFrame = num;
         window.requestAnimationFrame(this.redraw);
     }
@@ -326,26 +327,35 @@ class HTMLAnimElement extends HTMLElement
 
     #update()
     {
-        let cf = this.reverse ? this.currentFrame-1 : this.currentFrame+1,
-            tf = this.totalFrames - 1;
-
         if(this.reverse)
         {
-            if(cf<0 && this.loop)
+            if(this.currentFrame>0)
             {
-                cf = tf;
+                this.currentFrame--;
+            }
+            else if(this.loop)
+            {
+                this.currentFrame = this.totalFrames - 1;
+            }
+            else{
+                this.pause();
             }
         }
         else
         {
-            if(cf>tf && this.loop)
+            if(this.currentFrame<(this.totalFrames-1))
             {
-                cf = 0;
+                this.currentFrame++;
+            }
+            else if(this.loop)
+            {
+                this.currentFrame = 0;
+            }
+            else
+            {
+                this.pause();
             }
         }
-
-        this.currentFrame = cf;
-        //enterFrame event here
     }
 
 
@@ -353,7 +363,7 @@ class HTMLAnimElement extends HTMLElement
     {
         this.#clearFrames();
 
-        //render event here?
+        this.dispatchEvent(new Event('enterFrame'));
 
         this.appendChild(this.#frames[this.currentFrame]);
 
@@ -373,6 +383,10 @@ class HTMLAnimElement extends HTMLElement
 
     }
     
+    #clearStates()
+    {
+        
+    }
 
 }
 customElements.define('frame-anim', HTMLAnimElement);
