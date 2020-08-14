@@ -58,11 +58,11 @@ var _paused = new WeakMap();
 
 var _stopped = new WeakMap();
 
+var _reverse = new WeakMap();
+
 var _autoplay = new WeakMap();
 
 var _loop = new WeakMap();
-
-var _reverse = new WeakMap();
 
 var _pingpong = new WeakMap();
 
@@ -194,17 +194,17 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
       value: void 0
     });
 
+    _reverse.set(_assertThisInitialized(_this), {
+      writable: true,
+      value: void 0
+    });
+
     _autoplay.set(_assertThisInitialized(_this), {
       writable: true,
       value: false
     });
 
     _loop.set(_assertThisInitialized(_this), {
-      writable: true,
-      value: false
-    });
-
-    _reverse.set(_assertThisInitialized(_this), {
       writable: true,
       value: false
     });
@@ -406,6 +406,8 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
       } else {
         this.removeAttribute('reverse');
       }
+
+      this.dispatchEvent(new Event('stateChanged'));
     }
   }, {
     key: "pingpong",

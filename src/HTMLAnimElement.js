@@ -16,14 +16,13 @@ class HTMLAnimElement extends HTMLElement
     #width = 0;
     #height = 0;
 
-    #playing;
-    #paused;
-    #stopped;
-
-    #autoplay = false;
-    #loop = false;
+    #playing = false;
+    #paused = false;
+    #stopped = false;
     #reverse = false;
+    #loop = false;
     #pingpong = false;
+    #autoplay = false;
 
 
 
@@ -137,6 +136,7 @@ class HTMLAnimElement extends HTMLElement
         {
             this.removeAttribute('autoplay');
         }
+        this.dispatchEvent(new Event('stateChanged'));
     }
 
 
@@ -156,6 +156,7 @@ class HTMLAnimElement extends HTMLElement
         {
             this.removeAttribute('loop');
         }
+        this.dispatchEvent(new Event('stateChanged'));
     }
 
 
@@ -175,6 +176,7 @@ class HTMLAnimElement extends HTMLElement
         {
             this.removeAttribute('reverse');
         }
+        this.dispatchEvent(new Event('stateChanged'));
     }
 
 
@@ -194,6 +196,7 @@ class HTMLAnimElement extends HTMLElement
         {
             this.removeAttribute('pingpong');
         }
+        this.dispatchEvent(new Event('stateChanged'));
     }
 
 
