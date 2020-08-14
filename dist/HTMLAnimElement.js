@@ -70,6 +70,8 @@ var _clearFrames = new WeakSet();
 
 var _cleanUp = new WeakSet();
 
+var _clearStates = new WeakSet();
+
 /**
  * Class representing a HTMLAnimElement.
  * @extends HTMLElement
@@ -113,6 +115,8 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
                 </style>
             `;
             */
+
+    _clearStates.add(_assertThisInitialized(_this));
 
     _cleanUp.add(_assertThisInitialized(_this));
 
@@ -265,9 +269,9 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
   }, {
     key: "redraw",
     value: function redraw(timestamp) {
-      _classPrivateMethodGet(this, _clearFrames, _clearFrames2).call(this); //render event here?
+      _classPrivateMethodGet(this, _clearFrames, _clearFrames2).call(this);
 
-
+      this.dispatchEvent(new Event('enterFrame'));
       this.appendChild(_classPrivateFieldGet(this, _frames)[this.currentFrame]);
 
       _classPrivateMethodGet(this, _cleanUp, _cleanUp2).call(this);
@@ -292,6 +296,8 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
         num = Math.max(0, num) % this.totalFrames;
       }
 
+      console.log(num);
+
       _classPrivateFieldSet(this, _currentFrame, num);
 
       window.requestAnimationFrame(this.redraw);
@@ -307,8 +313,6 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
       return this.getAttribute('fps');
     },
     set: function set(value) {
-      console.log(value);
-
       if (isNaN(value)) {
         throw new TypeError('FPS must be a number.');
       }
@@ -420,20 +424,23 @@ var _clearTimer2 = function _clearTimer2() {
 };
 
 var _update2 = function _update2() {
-  var cf = this.reverse ? this.currentFrame - 1 : this.currentFrame + 1,
-      tf = this.totalFrames - 1;
-
   if (this.reverse) {
-    if (cf < 0 && this.loop) {
-      cf = tf;
+    if (this.currentFrame > 0) {
+      this.currentFrame--;
+    } else if (this.loop) {
+      this.currentFrame = this.totalFrames - 1;
+    } else {
+      this.pause();
     }
   } else {
-    if (cf > tf && this.loop) {
-      cf = 0;
+    if (this.currentFrame < this.totalFrames - 1) {
+      this.currentFrame++;
+    } else if (this.loop) {
+      this.currentFrame = 0;
+    } else {
+      this.pause();
     }
   }
-
-  this.currentFrame = cf; //enterFrame event here
 };
 
 var _clearFrames2 = function _clearFrames2() {
@@ -443,5 +450,7 @@ var _clearFrames2 = function _clearFrames2() {
 };
 
 var _cleanUp2 = function _cleanUp2() {};
+
+var _clearStates2 = function _clearStates2() {};
 
 customElements.define('frame-anim', HTMLAnimElement);

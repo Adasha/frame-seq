@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>anim-element test suite</title>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <div>
+            <section id="suite">
+
+
+                <frame-anim id="test" width="320" height="320" fps="12" autoplay loop reverse>
+                    <img src="walk/walk0001.png" width="320" height="320" alt="">
+                    <img src="walk/walk0002.png" width="320" height="320" alt="">
+                    <img src="walk/walk0003.png" width="320" height="320" alt="">
+                    <img src="walk/walk0004.png" width="320" height="320" alt="">
+                    <img src="walk/walk0005.png" width="320" height="320" alt="">
+                    <img src="walk/walk0006.png" width="320" height="320" alt="">
+                    <img src="walk/walk0007.png" width="320" height="320" alt="">
+                    <img src="walk/walk0008.png" width="320" height="320" alt="">
+                </frame-anim>
+
+
+            </section>
+
+            <aside id="controls">
+                <button id="firstframe-button">|&lt;</button>
+                <button id="prevframe-button">&lt;</button>
+                <button id="playrev-button">&#9204;</button>
+                <button id="pause-button">&#9208;</button>
+                <button id="play-button">&#9205;</button>
+                <button id="stop-button">&#9209;</button>
+                <button id="nextframe-button">&gt;</button>
+                <button id="lastframe-button">&gt;|</button>
+                <br>
+                <label for="frame-scrubber">Frame:</label>
+                <input type="range" min="0" id="frame-scrubber">
+                <span id="frame-counter">&nbsp;</span>
+                <br>
+                <input type="checkbox" id="loop-check"><label for="loop-check">Loop</label>
+                <input type="checkbox" id="reverse-check"><label for="reverse-check">Reverse</label>
+                <input type="checkbox" id="pingpong-check"><label for="pingpong-check">Ping-pong</label>
+            </aside>
+        </div>
+        <script src="../dist/HTMLAnimElement.js"></script>
+        <script>
+
+            let anim = document.getElementById('test');
+
+            let playrevButton = document.getElementById('playrev-button'),
+                playButton = document.getElementById('play-button'),
+                lastframeButton = document.getElementById('lastframe-button');
+
+            let frameScrubber = document.getElementById('frame-scrubber'),
+                frameCounter = document.getElementById('frame-counter');
+
+            let loopCheck = document.getElementById('loop-check'),
+                reverseCheck = document.getElementById('reverse-check'),
+                pingpongCheck = document.getElementById('pingpong-check');
+            
+            
+            frameScrubber.max = anim.totalFrames-1;
+            loopCheck.checked = anim.loop;
+            reverseCheck.checked = anim.reverse;
+            pingpongCheck.checked = anim.pingpong;
+
+
+
+            anim.addEventListener('enterFrame', () => {
+                frameScrubber.value = anim.currentFrame;
+                frameCounter.innerHTML = (anim.currentFrame+1) + '/' + anim.totalFrames + ' @' + anim.fps + 'fps';
+            });
+
+            loopCheck.addEventListener('change', () => {
+                anim.loop = loopCheck.checked;
+            });
+            reverseCheck.addEventListener('change', () => {
+                anim.reverse = reverseCheck.checked;
+            });
+            pingpongCheck.addEventListener('change', () => {
+                anim.pingpong = pingpongCheck.checked;
+            });
+        </script>
+    </body>
+</html>
