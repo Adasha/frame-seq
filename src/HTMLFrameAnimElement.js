@@ -1,5 +1,8 @@
 /**
  * Class representing a HTMLFrameAnimElement.
+ * @version 0.2.0a
+ * @author Adam Shailer <adasha76@outlook.com>
+ * @class
  * @extends HTMLElement
  */
 class HTMLFrameAnimElement extends HTMLElement
@@ -29,30 +32,20 @@ class HTMLFrameAnimElement extends HTMLElement
 
 
     static get observedAttributes() {
-        return ['autoplay', 'firstframe', 'fps', 'height', 'loop', 'pingpong', 'reverse', 'src', 'width'];
+        return ['autoplay', 'firstframe', 'fps', 'height', 'loop', 'pingpong', 'preload', 'reverse', 'src', 'width'];
     }
 
     /**
-     * Create a new HTMLFrameAnimElement.
+     * Create a HTMLFrameAnimElement instance.
+     * @constructor
+     * @fires HTMLFrameAnimElement#stateChanged
+     * @fires HTMLFrameAnimElement#enterFrame
      */
     constructor(...args)
     {
         super(...args);
 
         this.#shadow = this.attachShadow({mode: 'open'});
-/*
-        var shadow = this.attachShadow({mode: 'open'});
-        shadow.innerHTML = `
-            <style>
-                frame-anim
-                {
-                    width: 300px;
-                    height: 300px;
-                    position: relative;
-                }
-            </style>
-        `;
-        */
 
         while(this.children.length>0)
         {
@@ -199,9 +192,21 @@ class HTMLFrameAnimElement extends HTMLElement
 
 
 
-    get direction()
+    get preload()
     {
-        return null; // TODO: ;
+        return this.hasAttribute('preload');
+    }
+
+    set preload(bool)
+    {
+        if(!!bool)
+        {
+            this.setAttribute('preload', '');
+        }
+        else
+        {
+            this.removeAttribute('preload');
+        }
     }
 
 
@@ -242,6 +247,9 @@ class HTMLFrameAnimElement extends HTMLElement
 
     //METHODS
 
+    /**
+     * Begin playback from the first frame, or the last frame if 'reverse' is true.
+     */
     play()
     {
         this.currentFrame = this.reverse ? this.totalFrames-1 : 0;
@@ -251,6 +259,9 @@ class HTMLFrameAnimElement extends HTMLElement
         this.dispatchEvent(new Event('stateChanged'));
     }
 
+    /**
+     * Pause playback at the current frame.
+     */
     pause()
     {
         this.#clearTimer();
@@ -259,6 +270,9 @@ class HTMLFrameAnimElement extends HTMLElement
         this.dispatchEvent(new Event('stateChanged'));
     }
 
+    /**
+     * Resume playback at the current frame.
+     */
     resume()
     {
         this.#startTimer();
@@ -267,6 +281,9 @@ class HTMLFrameAnimElement extends HTMLElement
         this.dispatchEvent(new Event('stateChanged'));
     }
 
+    /**
+     * Stop playback and return to the first frame, or the last frame if 'reverse' is true.
+     */
     stop()
     {
         this.#clearTimer();
@@ -277,24 +294,37 @@ class HTMLFrameAnimElement extends HTMLElement
     }
 
 
+    /**
+     * Go to a specific frame and resume playback from there.
+     * @param {number} frame 
+     */
     gotoAndPlay(frame)
     {
         this.currentFrame = frame;
         this.resume();
     }
 
+    /**
+     * Go to a specific frame and pause playback.
+     * @param {number} frame 
+     */
     gotoAndPause(frame)
     {
         this.currentFrame = frame;
         this.pause();
     }
 
-
+    /**
+     * Advance by one frame.
+     */
     nextFrame()
     {
         ++this.currentFrame;
     }
 
+    /**
+     * Go back one frame.
+     */
     prevFrame()
     {
         --this.currentFrame;
@@ -360,7 +390,7 @@ class HTMLFrameAnimElement extends HTMLElement
     {
         this.#clearTimer();
 
-        let fps = this.fps ? this.fps : this.#DEFAULT_FPS,
+        let fps = this.fps || this.#DEFAULT_FPS,
             ms  = Math.floor(1000 / fps);
         
         this.#frameTimer = window.setInterval(() => this.#update(), ms);

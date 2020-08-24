@@ -497,7 +497,7 @@ var _startTimer2 = function _startTimer2() {
 
   _classPrivateMethodGet(this, _clearTimer, _clearTimer2).call(this);
 
-  var fps = this.fps ? this.fps : _classPrivateFieldGet(this, _DEFAULT_FPS),
+  var fps = this.fps || _classPrivateFieldGet(this, _DEFAULT_FPS),
       ms = Math.floor(1000 / fps);
 
   _classPrivateFieldSet(this, _frameTimer, window.setInterval(function () {

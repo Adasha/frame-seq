@@ -18,12 +18,19 @@ Custom HTML element to animate nested images. Early alpha.
 - preloading
 - folder-based image sequences
 - size mismatch management
+- Finer grained events
+
+
+### Post v1
+- Onion skinning
+
 
 
 
 ## Usage
 
 To use, embed JS file in `dist` and add the \<frame-anim\> element to your HTML. Any elements nested inside will be played back in sequence.
+
 
 ```HTML
 <frame-anim>
@@ -41,6 +48,7 @@ To use, embed JS file in `dist` and add the \<frame-anim\> element to your HTML.
 ```
 
 
+
 ### Attributes
 
 - `fps` - Playback speed. Default 12. (frames-per-second).
@@ -50,6 +58,8 @@ To use, embed JS file in `dist` and add the \<frame-anim\> element to your HTML.
 - `loop` - Boolean: Playback automatically loops (regardless of direction).
 - `width` - Doesn't do anything yet.
 - `height` - Doesn't do anything yet.
+- `preload` - Boolean: Doesn't do anything yet.
+
 
 
 ### Properties
@@ -76,4 +86,11 @@ These methods will almost certainly be thinned out in a future version.
 - `gotoAndResume(frame)`
 - `nextFrame()`
 - `prevFrame()`
+
+
+
+### Events
+
+- `stateChanged` - When the playback state has changed or any attribute is modified.
+- `enterFrame` - At the beginning of each redraw.
 
