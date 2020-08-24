@@ -1,5 +1,5 @@
 {
-  "name": "frame-anim",
+  "name": "frame-seq",
   "version": "0.2.0a",
 	"author": {
 		"name": "Adam Shailer",
@@ -31,13 +31,13 @@
 	"directories": {
 		"test": "tests"
 	},
-	"homepage": "http://lab.adasha.com/frame-anim",
+	"homepage": "http://lab.adasha.com/frame-seq",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Adasha/frame-anim"
+		"url": "https://github.com/Adasha/frame-seq"
 	},
 	"bugs": {
-		"url": "https://github.com/Adasha/frame-anim/issues",
+		"url": "https://github.com/Adasha/frame-seq/issues",
 		"email": "adasha76@outlook.com"
 	},
   "scripts": {

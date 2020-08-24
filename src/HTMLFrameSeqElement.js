@@ -1,11 +1,11 @@
 /**
- * Class representing a HTMLFrameAnimElement.
+ * Class representing a HTMLFrameSeqElement.
  * @version 0.2.0a
  * @author Adam Shailer <adasha76@outlook.com>
  * @class
  * @extends HTMLElement
  */
-class HTMLFrameAnimElement extends HTMLElement
+class HTMLFrameSeqElement extends HTMLElement
 {
     #DEFAULT_FPS = 15;
 
@@ -36,10 +36,10 @@ class HTMLFrameAnimElement extends HTMLElement
     }
 
     /**
-     * Create a HTMLFrameAnimElement instance.
+     * Create a HTMLFrameSeqElement instance.
      * @constructor
-     * @fires HTMLFrameAnimElement#stateChanged
-     * @fires HTMLFrameAnimElement#enterFrame
+     * @fires HTMLFrameSeqElement#stateChanged
+     * @fires HTMLFrameSeqElement#enterFrame
      */
     constructor(...args)
     {
@@ -491,4 +491,4 @@ class HTMLFrameAnimElement extends HTMLElement
     
 
 }
-customElements.define('frame-anim', HTMLFrameAnimElement);
+customElements.define('frame-seq', HTMLFrameSeqElement);

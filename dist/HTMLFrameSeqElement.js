@@ -81,35 +81,35 @@ var _clearStates = new WeakSet();
 var _cleanUp = new WeakSet();
 
 /**
- * Class representing a HTMLFrameAnimElement.
+ * Class representing a HTMLFrameSeqElement.
  * @version 0.2.0a
  * @author Adam Shailer <adasha76@outlook.com>
  * @class
  * @extends HTMLElement
  */
-var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
-  _inherits(HTMLFrameAnimElement, _HTMLElement);
+var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
+  _inherits(HTMLFrameSeqElement, _HTMLElement);
 
-  var _super = _createSuper(HTMLFrameAnimElement);
+  var _super = _createSuper(HTMLFrameSeqElement);
 
-  _createClass(HTMLFrameAnimElement, null, [{
+  _createClass(HTMLFrameSeqElement, null, [{
     key: "observedAttributes",
     get: function get() {
       return ['autoplay', 'firstframe', 'fps', 'height', 'loop', 'pingpong', 'preload', 'reverse', 'src', 'width'];
     }
     /**
-     * Create a HTMLFrameAnimElement instance.
+     * Create a HTMLFrameSeqElement instance.
      * @constructor
-     * @fires HTMLFrameAnimElement#stateChanged
-     * @fires HTMLFrameAnimElement#enterFrame
+     * @fires HTMLFrameSeqElement#stateChanged
+     * @fires HTMLFrameSeqElement#enterFrame
      */
 
   }]);
 
-  function HTMLFrameAnimElement() {
+  function HTMLFrameSeqElement() {
     var _this;
 
-    _classCallCheck(this, HTMLFrameAnimElement);
+    _classCallCheck(this, HTMLFrameSeqElement);
 
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
@@ -230,7 +230,7 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
   } // PROPERTIES
 
 
-  _createClass(HTMLFrameAnimElement, [{
+  _createClass(HTMLFrameSeqElement, [{
     key: "play",
     //METHODS
 
@@ -531,7 +531,7 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
     }
   }]);
 
-  return HTMLFrameAnimElement;
+  return HTMLFrameSeqElement;
 }( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
 
 var _startTimer2 = function _startTimer2() {
@@ -595,4 +595,4 @@ var _clearStates2 = function _clearStates2() {
 
 var _cleanUp2 = function _cleanUp2() {};
 
-customElements.define('frame-anim', HTMLFrameAnimElement);
+customElements.define('frame-seq', HTMLFrameSeqElement);
