@@ -34,7 +34,7 @@
                 <button id="stop-button">&#9209;</button>
                 <br>
                 <label for="frame-scrubber">Frame:</label>
-                <input type="range" min="0" id="frame-scrubber">
+                <input type="range" min="1" id="frame-scrubber">
                 <span id="frame-counter">&nbsp;</span>
                 <br>
                 <input type="checkbox" id="loop-check"><label for="loop-check">Loop</label>
@@ -64,7 +64,7 @@
                 pingpongCheck = document.getElementById('pingpong-check');
             
             
-            frameScrubber.max = anim.totalFrames-1;
+            frameScrubber.max = anim.totalFrames;
             loopCheck.checked = anim.loop;
             reverseCheck.checked = anim.reverse;
             pingpongCheck.checked = anim.pingpong;
@@ -73,7 +73,7 @@
 
             anim.addEventListener('enterFrame', () => {
                 frameScrubber.value = anim.currentFrame;
-                frameCounter.innerHTML = (anim.currentFrame+1) + '/' + anim.totalFrames + ' @' + anim.fps + 'fps';
+                frameCounter.innerHTML = anim.currentFrame + '/' + anim.totalFrames + ' @' + anim.fps + 'fps';
             });
             anim.addEventListener('stateChanged', () => {
                 if(anim.paused)

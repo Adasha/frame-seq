@@ -11,7 +11,7 @@ class HTMLFrameAnimElement extends HTMLElement
 
 
     #frames = [];
-    #currentFrame = 0;
+    #currentFrame = 1;
     #totalFrames;
     #fps;
     #frameTimer;
@@ -79,10 +79,10 @@ class HTMLFrameAnimElement extends HTMLElement
             console.log('WARN: frame number must be an integer. Fraction discarded.');
             num = Math.floor(num);
         }
-        if(num<0 || num>=this.totalFrames)
+        if(num<1 || num>this.totalFrames)
         {
             console.log('WARN: frame number out of range. Closest value used.');
-            num = Math.max(0, num)%this.totalFrames;
+            num = Math.min(Math.max(1, num), this.totalFrames);
         }
         this.#currentFrame = num;
         window.requestAnimationFrame(this.redraw);
@@ -245,6 +245,13 @@ class HTMLFrameAnimElement extends HTMLElement
         return this.#paused;
     }
 
+    get stopped()
+    {
+        return this.#stopped;
+    }
+
+
+
     //METHODS
 
     /**
@@ -252,7 +259,7 @@ class HTMLFrameAnimElement extends HTMLElement
      */
     play()
     {
-        this.currentFrame = this.reverse ? this.totalFrames-1 : 0;
+        this.currentFrame = this.reverse ? this.totalFrames : 1;
         this.#startTimer();
         this.#clearStates();
         this.#playing = true;
@@ -287,7 +294,7 @@ class HTMLFrameAnimElement extends HTMLElement
     stop()
     {
         this.#clearTimer();
-        this.currentFrame = this.reverse ? this.totalFrames-1 : 0;
+        this.currentFrame = this.reverse ? this.totalFrames : 1;
         this.#clearStates();
         this.#stopped = true;
         this.dispatchEvent(new Event('stateChanged'));
@@ -319,7 +326,7 @@ class HTMLFrameAnimElement extends HTMLElement
      */
     nextFrame()
     {
-        ++this.currentFrame;
+        this.currentFrame = Math.min(this.currentFrame+1, this.totalFrames);
     }
 
     /**
@@ -327,7 +334,7 @@ class HTMLFrameAnimElement extends HTMLElement
      */
     prevFrame()
     {
-        --this.currentFrame;
+        this.currentFrame = Math.max(this.currentFrame-1, 1);
     }
 
 
@@ -410,13 +417,13 @@ class HTMLFrameAnimElement extends HTMLElement
     {
         if(this.reverse)
         {
-            if(this.currentFrame>0)
+            if(this.currentFrame>1)
             {
                 this.currentFrame--;
             }
             else if(this.loop)
             {
-                this.currentFrame = this.totalFrames - 1;
+                this.currentFrame = this.totalFrames;
             }
             else{
                 this.pause();
@@ -424,13 +431,13 @@ class HTMLFrameAnimElement extends HTMLElement
         }
         else
         {
-            if(this.currentFrame<(this.totalFrames-1))
+            if(this.currentFrame<this.totalFrames)
             {
                 this.currentFrame++;
             }
             else if(this.loop)
             {
-                this.currentFrame = 0;
+                this.currentFrame = 1;
             }
             else
             {
@@ -446,7 +453,7 @@ class HTMLFrameAnimElement extends HTMLElement
 
         this.dispatchEvent(new Event('enterFrame'));
 
-        this.#shadow.appendChild(this.#frames[this.currentFrame]);
+        this.#shadow.appendChild(this.#frames[this.currentFrame-1]);
 
         this.#cleanUp();
     }

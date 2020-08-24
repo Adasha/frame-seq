@@ -1,5 +1,7 @@
 # frame-anim
-Custom HTML element to animate nested images. Early alpha.
+Custom HTML element to animate nested images.
+
+Early alpha. Preloading not implemented yet so it will stutter through first playthrough.
 
 
 ## Features
@@ -18,7 +20,7 @@ Custom HTML element to animate nested images. Early alpha.
 - preloading
 - folder-based image sequences
 - size mismatch management
-- Finer grained events
+- finer-grained events
 
 
 ### Post v1
@@ -29,7 +31,7 @@ Custom HTML element to animate nested images. Early alpha.
 
 ## Usage
 
-To use, embed JS file in `dist` and add the \<frame-anim\> element to your HTML. Any elements nested inside will be played back in sequence.
+To use, embed JS file in `dist` and add the `<frame-anim>` element to your HTML. Any elements nested inside will be played back in order of the HTML.
 
 
 ```HTML
@@ -51,7 +53,7 @@ To use, embed JS file in `dist` and add the \<frame-anim\> element to your HTML.
 
 ### Attributes
 
-- `fps` - Playback speed. Default 12. (frames-per-second).
+- `fps` - Playback speed (frames-per-second). Default 12.
 - `autoplay` - Boolean: Begin playback as soon as element is rendered.
 - `reverse` - Boolean: Playback is in opposite direction.
 - `pingpong` - Boolean: Doesn't do anything yet.
@@ -66,11 +68,12 @@ To use, embed JS file in `dist` and add the \<frame-anim\> element to your HTML.
 
 All attributes are also expressed as properties. Additional properties are:
 
-- `currentFrame` - The current playhead position.
+- `currentFrame` - The current playhead position (starting at 1).
 - `totalFrames` - The total number of frames in the animation (read-only).
 - `duration` - The total running time of the animation, based on the current FPS (read-only).
 - `playing` - Boolean: Whether the animation is currently playing (read-only).
 - `paused` - Boolean: Whether the animation is currently paused (read-only).
+- `stopped` - Boolean: Whether the animation is currently stopped (read-only).
 
 
 

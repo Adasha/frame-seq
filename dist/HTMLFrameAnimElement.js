@@ -82,6 +82,9 @@ var _cleanUp = new WeakSet();
 
 /**
  * Class representing a HTMLFrameAnimElement.
+ * @version 0.2.0a
+ * @author Adam Shailer <adasha76@outlook.com>
+ * @class
  * @extends HTMLElement
  */
 var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
@@ -92,10 +95,13 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
   _createClass(HTMLFrameAnimElement, null, [{
     key: "observedAttributes",
     get: function get() {
-      return ['autoplay', 'firstframe', 'fps', 'height', 'loop', 'pingpong', 'reverse', 'src', 'width'];
+      return ['autoplay', 'firstframe', 'fps', 'height', 'loop', 'pingpong', 'preload', 'reverse', 'src', 'width'];
     }
     /**
-     * Create a new HTMLFrameAnimElement.
+     * Create a HTMLFrameAnimElement instance.
+     * @constructor
+     * @fires HTMLFrameAnimElement#stateChanged
+     * @fires HTMLFrameAnimElement#enterFrame
      */
 
   }]);
@@ -135,7 +141,7 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
 
     _currentFrame.set(_assertThisInitialized(_this), {
       writable: true,
-      value: 0
+      value: 1
     });
 
     _totalFrames.set(_assertThisInitialized(_this), {
@@ -211,20 +217,6 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
     _classPrivateFieldSet(_assertThisInitialized(_this), _shadow, _this.attachShadow({
       mode: 'open'
     }));
-    /*
-            var shadow = this.attachShadow({mode: 'open'});
-            shadow.innerHTML = `
-                <style>
-                    frame-anim
-                    {
-                        width: 300px;
-                        height: 300px;
-                        position: relative;
-                    }
-                </style>
-            `;
-            */
-
 
     while (_this.children.length > 0) {
       _classPrivateFieldGet(_assertThisInitialized(_this), _frames).push(_this.removeChild(_this.children[0]));
@@ -238,8 +230,12 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
   _createClass(HTMLFrameAnimElement, [{
     key: "play",
     //METHODS
+
+    /**
+     * Begin playback from the first frame, or the last frame if 'reverse' is true.
+     */
     value: function play() {
-      this.currentFrame = this.reverse ? this.totalFrames - 1 : 0;
+      this.currentFrame = this.reverse ? this.totalFrames : 1;
 
       _classPrivateMethodGet(this, _startTimer, _startTimer2).call(this);
 
@@ -249,6 +245,10 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
 
       this.dispatchEvent(new Event('stateChanged'));
     }
+    /**
+     * Pause playback at the current frame.
+     */
+
   }, {
     key: "pause",
     value: function pause() {
@@ -260,6 +260,10 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
 
       this.dispatchEvent(new Event('stateChanged'));
     }
+    /**
+     * Resume playback at the current frame.
+     */
+
   }, {
     key: "resume",
     value: function resume() {
@@ -271,12 +275,16 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
 
       this.dispatchEvent(new Event('stateChanged'));
     }
+    /**
+     * Stop playback and return to the first frame, or the last frame if 'reverse' is true.
+     */
+
   }, {
     key: "stop",
     value: function stop() {
       _classPrivateMethodGet(this, _clearTimer, _clearTimer2).call(this);
 
-      this.currentFrame = this.reverse ? this.totalFrames - 1 : 0;
+      this.currentFrame = this.reverse ? this.totalFrames : 1;
 
       _classPrivateMethodGet(this, _clearStates, _clearStates2).call(this);
 
@@ -284,27 +292,45 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
 
       this.dispatchEvent(new Event('stateChanged'));
     }
+    /**
+     * Go to a specific frame and resume playback from there.
+     * @param {number} frame 
+     */
+
   }, {
     key: "gotoAndPlay",
     value: function gotoAndPlay(frame) {
       this.currentFrame = frame;
       this.resume();
     }
+    /**
+     * Go to a specific frame and pause playback.
+     * @param {number} frame 
+     */
+
   }, {
     key: "gotoAndPause",
     value: function gotoAndPause(frame) {
       this.currentFrame = frame;
       this.pause();
     }
+    /**
+     * Advance by one frame.
+     */
+
   }, {
     key: "nextFrame",
     value: function nextFrame() {
-      ++this.currentFrame;
+      this.currentFrame = Math.min(this.currentFrame + 1, this.totalFrames);
     }
+    /**
+     * Go back one frame.
+     */
+
   }, {
     key: "prevFrame",
     value: function prevFrame() {
-      --this.currentFrame;
+      this.currentFrame = Math.max(this.currentFrame - 1, 1);
     }
   }, {
     key: "connectedCallback",
@@ -362,7 +388,7 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
 
       this.dispatchEvent(new Event('enterFrame'));
 
-      _classPrivateFieldGet(this, _shadow).appendChild(_classPrivateFieldGet(this, _frames)[this.currentFrame]);
+      _classPrivateFieldGet(this, _shadow).appendChild(_classPrivateFieldGet(this, _frames)[this.currentFrame - 1]);
 
       _classPrivateMethodGet(this, _cleanUp, _cleanUp2).call(this);
     }
@@ -381,9 +407,9 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
         num = Math.floor(num);
       }
 
-      if (num < 0 || num >= this.totalFrames) {
+      if (num < 1 || num > this.totalFrames) {
         console.log('WARN: frame number out of range. Closest value used.');
-        num = Math.max(0, num) % this.totalFrames;
+        num = Math.min(Math.max(1, num), this.totalFrames);
       }
 
       _classPrivateFieldSet(this, _currentFrame, num);
@@ -457,9 +483,16 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
       }
     }
   }, {
-    key: "direction",
+    key: "preload",
     get: function get() {
-      return null; // TODO: ;
+      return this.hasAttribute('preload');
+    },
+    set: function set(bool) {
+      if (!!bool) {
+        this.setAttribute('preload', '');
+      } else {
+        this.removeAttribute('preload');
+      }
     }
   }, {
     key: "width",
@@ -486,6 +519,11 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
     key: "paused",
     get: function get() {
       return _classPrivateFieldGet(this, _paused);
+    }
+  }, {
+    key: "stopped",
+    get: function get() {
+      return _classPrivateFieldGet(this, _stopped);
     }
   }]);
 
@@ -515,18 +553,18 @@ var _clearTimer2 = function _clearTimer2() {
 
 var _update2 = function _update2() {
   if (this.reverse) {
-    if (this.currentFrame > 0) {
+    if (this.currentFrame > 1) {
       this.currentFrame--;
     } else if (this.loop) {
-      this.currentFrame = this.totalFrames - 1;
+      this.currentFrame = this.totalFrames;
     } else {
       this.pause();
     }
   } else {
-    if (this.currentFrame < this.totalFrames - 1) {
+    if (this.currentFrame < this.totalFrames) {
       this.currentFrame++;
     } else if (this.loop) {
-      this.currentFrame = 0;
+      this.currentFrame = 1;
     } else {
       this.pause();
     }
