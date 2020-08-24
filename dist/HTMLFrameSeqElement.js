@@ -36,8 +36,6 @@ function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = p
 
 var _DEFAULT_FPS = new WeakMap();
 
-var _frames = new WeakMap();
-
 var _currentFrame = new WeakMap();
 
 var _totalFrames = new WeakMap();
@@ -82,7 +80,7 @@ var _cleanUp = new WeakSet();
 
 /**
  * Class representing a HTMLFrameSeqElement.
- * @version 0.2.0a
+ * @version 0.2.2a
  * @author Adam Shailer <adasha76@outlook.com>
  * @class
  * @extends HTMLElement
@@ -94,6 +92,7 @@ var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
 
   _createClass(HTMLFrameSeqElement, null, [{
     key: "observedAttributes",
+    // #frames = [];
     get: function get() {
       return ['autoplay', 'firstframe', 'fps', 'height', 'loop', 'pingpong', 'preload', 'reverse', 'src', 'width'];
     }
@@ -132,11 +131,6 @@ var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
     _DEFAULT_FPS.set(_assertThisInitialized(_this), {
       writable: true,
       value: 15
-    });
-
-    _frames.set(_assertThisInitialized(_this), {
-      writable: true,
-      value: []
     });
 
     _currentFrame.set(_assertThisInitialized(_this), {
@@ -390,8 +384,9 @@ var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
       _classPrivateMethodGet(this, _clearFrames, _clearFrames2).call(this);
 
       this.dispatchEvent(new Event('enterFrame')); // this.#shadow.appendChild(this.#frames[this.currentFrame-1]);
+      // this.#shadow.children[this.currentFrame-1].style.display = 'block';
 
-      _classPrivateFieldGet(this, _shadow).children[this.currentFrame - 1].style.display = 'block';
+      _classPrivateFieldGet(this, _shadow).children[this.currentFrame - 1].style.removeProperty('display');
 
       _classPrivateMethodGet(this, _cleanUp, _cleanUp2).call(this);
     }

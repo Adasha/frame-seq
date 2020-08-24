@@ -1,6 +1,6 @@
 /**
  * Class representing a HTMLFrameSeqElement.
- * @version 0.2.0a
+ * @version 0.2.2a
  * @author Adam Shailer <adasha76@outlook.com>
  * @class
  * @extends HTMLElement
@@ -10,7 +10,7 @@ class HTMLFrameSeqElement extends HTMLElement
     #DEFAULT_FPS = 15;
 
 
-    #frames = [];
+    // #frames = [];
     #currentFrame = 1;
     #totalFrames;
     #fps;
@@ -457,7 +457,8 @@ class HTMLFrameSeqElement extends HTMLElement
         this.dispatchEvent(new Event('enterFrame'));
 
         // this.#shadow.appendChild(this.#frames[this.currentFrame-1]);
-        this.#shadow.children[this.currentFrame-1].style.display = 'block';
+        // this.#shadow.children[this.currentFrame-1].style.display = 'block';
+        this.#shadow.children[this.currentFrame-1].style.removeProperty('display');
 
         this.#cleanUp();
     }
