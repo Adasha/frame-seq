@@ -1,7 +1,22 @@
 {
-  "name": "anim-element",
-  "version": "0.1.0a",
-  "description": "",
+  "name": "frame-anim",
+  "version": "0.2.0a",
+	"author": {
+		"name": "Adam Shailer",
+		"email": "adasha76@outlook.com",
+		"url": "http://adasha.com"
+	},
+  "license": "MPL-2.0",
+  "description": "Flipbook style playback of image sequences. Custom HTML element.",
+  "keywords": [
+    "animate", "animation",
+    "motion", "movement",
+    "stopmotion", "stop-motion",
+    "flipbook", "flip-book",
+    "frame", "frame-by-frame", "card", "slide", "picture", "image",
+    "sequence", "sequencer", "projector",
+    "HTML", "element", "custom-element", "component"
+  ],
   "dependencies": {
     "@babel/polyfill": "^7.10.4"
   },
@@ -13,11 +28,11 @@
     "@babel/preset-env": "^7.11.0",
     "jsdoc": "^3.6.5"
   },
+	"directories": {
+		"test": "tests"
+	},
   "scripts": {
     "build": "babel src -d dist",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "adasha",
-  "license": "ISC"
+  }
 }

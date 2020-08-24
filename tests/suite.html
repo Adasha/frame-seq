@@ -42,7 +42,7 @@
                 <input type="checkbox" id="pingpong-check"><label for="pingpong-check">Ping-pong</label>
             </aside>
         </div>
-        <script src="../dist/HTMLAnimElement.js"></script>
+        <script src="../dist/HTMLFrameAnimElement.js"></script>
         <script>
 
             let anim = document.getElementById('test');
@@ -85,6 +85,7 @@
                     pauseButton.style = 'background-color: inherit';
                 }
                 reverseCheck.checked = anim.reverse;
+                console.log('state changed');
             });
 
 
@@ -127,7 +128,9 @@
                 anim.loop = loopCheck.checked;
             });
             reverseCheck.addEventListener('change', () => {
-                anim.reverse = reverseCheck.checked;
+                //anim.reverse = reverseCheck.checked;
+                if(reverseCheck.checked) anim.setAttribute('reverse', '');
+                else anim.removeAttribute('reverse');
             });
             pingpongCheck.addEventListener('change', () => {
                 anim.pingpong = pingpongCheck.checked;

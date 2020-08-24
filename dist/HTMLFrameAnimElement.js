@@ -30,9 +30,9 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return fn; }
 
-function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = privateMap.get(receiver); if (!descriptor) { throw new TypeError("attempted to set private field on non-instance"); } if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } return value; }
-
 function _classPrivateFieldGet(receiver, privateMap) { var descriptor = privateMap.get(receiver); if (!descriptor) { throw new TypeError("attempted to get private field on non-instance"); } if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+
+function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = privateMap.get(receiver); if (!descriptor) { throw new TypeError("attempted to set private field on non-instance"); } if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } return value; }
 
 var _DEFAULT_FPS = new WeakMap();
 
@@ -60,11 +60,13 @@ var _stopped = new WeakMap();
 
 var _reverse = new WeakMap();
 
-var _autoplay = new WeakMap();
-
 var _loop = new WeakMap();
 
 var _pingpong = new WeakMap();
+
+var _autoplay = new WeakMap();
+
+var _shadow = new WeakMap();
 
 var _startTimer = new WeakSet();
 
@@ -79,48 +81,35 @@ var _clearStates = new WeakSet();
 var _cleanUp = new WeakSet();
 
 /**
- * Class representing a HTMLAnimElement.
+ * Class representing a HTMLFrameAnimElement.
  * @extends HTMLElement
  */
-var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
-  _inherits(HTMLAnimElement, _HTMLElement);
+var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
+  _inherits(HTMLFrameAnimElement, _HTMLElement);
 
-  var _super = _createSuper(HTMLAnimElement);
+  var _super = _createSuper(HTMLFrameAnimElement);
 
-  _createClass(HTMLAnimElement, null, [{
+  _createClass(HTMLFrameAnimElement, null, [{
     key: "observedAttributes",
     get: function get() {
       return ['autoplay', 'firstframe', 'fps', 'height', 'loop', 'pingpong', 'reverse', 'src', 'width'];
     }
     /**
-     * Create a new HTMLAnimElement.
+     * Create a new HTMLFrameAnimElement.
      */
 
   }]);
 
-  function HTMLAnimElement() {
+  function HTMLFrameAnimElement() {
     var _this;
 
-    _classCallCheck(this, HTMLAnimElement);
+    _classCallCheck(this, HTMLFrameAnimElement);
 
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
 
     _this = _super.call.apply(_super, [this].concat(args));
-    /*
-            var shadow = this.attachShadow({mode: 'open'});
-            shadow.innerHTML = `
-                <style>
-                    frame-anim
-                    {
-                        width: 300px;
-                        height: 300px;
-                        position: relative;
-                    }
-                </style>
-            `;
-            */
 
     _cleanUp.add(_assertThisInitialized(_this));
 
@@ -181,25 +170,20 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
 
     _playing.set(_assertThisInitialized(_this), {
       writable: true,
-      value: void 0
+      value: false
     });
 
     _paused.set(_assertThisInitialized(_this), {
       writable: true,
-      value: void 0
+      value: false
     });
 
     _stopped.set(_assertThisInitialized(_this), {
       writable: true,
-      value: void 0
+      value: false
     });
 
     _reverse.set(_assertThisInitialized(_this), {
-      writable: true,
-      value: void 0
-    });
-
-    _autoplay.set(_assertThisInitialized(_this), {
       writable: true,
       value: false
     });
@@ -214,12 +198,44 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
       value: false
     });
 
+    _autoplay.set(_assertThisInitialized(_this), {
+      writable: true,
+      value: false
+    });
+
+    _shadow.set(_assertThisInitialized(_this), {
+      writable: true,
+      value: void 0
+    });
+
+    _classPrivateFieldSet(_assertThisInitialized(_this), _shadow, _this.attachShadow({
+      mode: 'open'
+    }));
+    /*
+            var shadow = this.attachShadow({mode: 'open'});
+            shadow.innerHTML = `
+                <style>
+                    frame-anim
+                    {
+                        width: 300px;
+                        height: 300px;
+                        position: relative;
+                    }
+                </style>
+            `;
+            */
+
+
+    while (_this.children.length > 0) {
+      _classPrivateFieldGet(_assertThisInitialized(_this), _frames).push(_this.removeChild(_this.children[0]));
+    }
+
     _this.redraw = _this.redraw.bind(_assertThisInitialized(_this));
     return _this;
   } // PROPERTIES
 
 
-  _createClass(HTMLAnimElement, [{
+  _createClass(HTMLFrameAnimElement, [{
     key: "play",
     //METHODS
     value: function play() {
@@ -293,10 +309,6 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
   }, {
     key: "connectedCallback",
     value: function connectedCallback() {
-      while (this.children.length > 0) {
-        _classPrivateFieldGet(this, _frames).push(this.removeChild(this.children[0]));
-      }
-
       if (this.autoplay) {
         this.play();
       } else {
@@ -309,7 +321,39 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
   }, {
     key: "attributeChangedCallback",
     value: function attributeChangedCallback(name, oldValue, newValue) {
-      if (!(name in this)) throw new Error("".concat(name, " is not a recognised attribute.")); //else this[name] = newValue;
+      switch (name) {
+        case 'autoplay':
+          break;
+
+        case 'reverse':
+          break;
+
+        case 'loop':
+          break;
+
+        case 'pingpong':
+          break;
+
+        case 'fps':
+          if (isNaN(this.fps)) {
+            throw new TypeError('FPS must be a number.');
+          }
+
+          if (_classPrivateFieldGet(this, _frameTimer)) {
+            this.resume();
+          }
+
+          break;
+
+        case 'width':
+        case 'height':
+          break;
+
+        default:
+          throw new Error("".concat(name, " is not a recognised attribute."));
+      }
+
+      this.dispatchEvent(new Event('stateChanged'));
     }
   }, {
     key: "redraw",
@@ -317,7 +361,8 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
       _classPrivateMethodGet(this, _clearFrames, _clearFrames2).call(this);
 
       this.dispatchEvent(new Event('enterFrame'));
-      this.appendChild(_classPrivateFieldGet(this, _frames)[this.currentFrame]);
+
+      _classPrivateFieldGet(this, _shadow).appendChild(_classPrivateFieldGet(this, _frames)[this.currentFrame]);
 
       _classPrivateMethodGet(this, _cleanUp, _cleanUp2).call(this);
     }
@@ -356,15 +401,7 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
       return this.getAttribute('fps');
     },
     set: function set(value) {
-      if (isNaN(value)) {
-        throw new TypeError('FPS must be a number.');
-      }
-
       this.setAttribute('fps', value);
-
-      if (_classPrivateFieldGet(this, _frameTimer)) {
-        this.resume();
-      }
     }
   }, {
     key: "duration",
@@ -406,8 +443,6 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
       } else {
         this.removeAttribute('reverse');
       }
-
-      this.dispatchEvent(new Event('stateChanged'));
     }
   }, {
     key: "pingpong",
@@ -454,7 +489,7 @@ var HTMLAnimElement = /*#__PURE__*/function (_HTMLElement) {
     }
   }]);
 
-  return HTMLAnimElement;
+  return HTMLFrameAnimElement;
 }( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
 
 var _startTimer2 = function _startTimer2() {
@@ -499,8 +534,8 @@ var _update2 = function _update2() {
 };
 
 var _clearFrames2 = function _clearFrames2() {
-  while (this.firstChild) {
-    this.removeChild(this.lastChild);
+  while (_classPrivateFieldGet(this, _shadow).firstChild) {
+    _classPrivateFieldGet(this, _shadow).removeChild(_classPrivateFieldGet(this, _shadow).lastChild);
   }
 };
 
@@ -514,4 +549,4 @@ var _clearStates2 = function _clearStates2() {
 
 var _cleanUp2 = function _cleanUp2() {};
 
-customElements.define('frame-anim', HTMLAnimElement);
+customElements.define('frame-anim', HTMLFrameAnimElement);

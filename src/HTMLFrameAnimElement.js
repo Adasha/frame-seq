@@ -1,8 +1,8 @@
 /**
- * Class representing a HTMLAnimElement.
+ * Class representing a HTMLFrameAnimElement.
  * @extends HTMLElement
  */
-class HTMLAnimElement extends HTMLElement
+class HTMLFrameAnimElement extends HTMLElement
 {
     #DEFAULT_FPS = 15;
 
@@ -24,6 +24,8 @@ class HTMLAnimElement extends HTMLElement
     #pingpong = false;
     #autoplay = false;
 
+    #shadow;
+
 
 
     static get observedAttributes() {
@@ -31,12 +33,13 @@ class HTMLAnimElement extends HTMLElement
     }
 
     /**
-     * Create a new HTMLAnimElement.
+     * Create a new HTMLFrameAnimElement.
      */
     constructor(...args)
     {
         super(...args);
 
+        this.#shadow = this.attachShadow({mode: 'open'});
 /*
         var shadow = this.attachShadow({mode: 'open'});
         shadow.innerHTML = `
@@ -50,6 +53,13 @@ class HTMLAnimElement extends HTMLElement
             </style>
         `;
         */
+
+        while(this.children.length>0)
+        {
+            this.#frames.push(this.removeChild(this.children[0]));
+        }
+       
+
         this.redraw = this.redraw.bind(this);
     }
 
@@ -101,15 +111,7 @@ class HTMLAnimElement extends HTMLElement
 
     set fps(value)
     {
-        if(isNaN(value))
-        {
-            throw new TypeError('FPS must be a number.');
-        }
         this.setAttribute('fps', value);
-        if(this.#frameTimer)
-        {
-            this.resume();
-        }
     }
 
 
@@ -136,7 +138,6 @@ class HTMLAnimElement extends HTMLElement
         {
             this.removeAttribute('autoplay');
         }
-        this.dispatchEvent(new Event('stateChanged'));
     }
 
 
@@ -156,7 +157,6 @@ class HTMLAnimElement extends HTMLElement
         {
             this.removeAttribute('loop');
         }
-        this.dispatchEvent(new Event('stateChanged'));
     }
 
 
@@ -176,7 +176,6 @@ class HTMLAnimElement extends HTMLElement
         {
             this.removeAttribute('reverse');
         }
-        this.dispatchEvent(new Event('stateChanged'));
     }
 
 
@@ -196,7 +195,6 @@ class HTMLAnimElement extends HTMLElement
         {
             this.removeAttribute('pingpong');
         }
-        this.dispatchEvent(new Event('stateChanged'));
     }
 
 
@@ -305,11 +303,6 @@ class HTMLAnimElement extends HTMLElement
 
     connectedCallback()
     {
-        while(this.children.length>0)
-        {
-            this.#frames.push(this.removeChild(this.children[0]));
-        }
-        
         if(this.autoplay)
         {
             this.play();
@@ -326,8 +319,39 @@ class HTMLAnimElement extends HTMLElement
 
     attributeChangedCallback(name, oldValue, newValue)
     {
-        if(!(name in this)) throw new Error(`${name} is not a recognised attribute.`);
-        //else this[name] = newValue;
+        switch(name)
+        {
+            case 'autoplay' :
+                break;
+
+            case 'reverse' :
+                break;
+
+            case 'loop' :
+                break;
+
+            case 'pingpong' :
+                break;
+
+            case 'fps' :
+                if(isNaN(this.fps))
+                {
+                    throw new TypeError('FPS must be a number.');
+                }
+                if(this.#frameTimer)
+                {
+                    this.resume();
+                }
+                break;
+
+            case 'width' :
+            case 'height' :
+                break;
+                
+            default :
+            throw new Error(`${name} is not a recognised attribute.`);
+        }
+        this.dispatchEvent(new Event('stateChanged'));
     }
 
 
@@ -392,7 +416,7 @@ class HTMLAnimElement extends HTMLElement
 
         this.dispatchEvent(new Event('enterFrame'));
 
-        this.appendChild(this.#frames[this.currentFrame]);
+        this.#shadow.appendChild(this.#frames[this.currentFrame]);
 
         this.#cleanUp();
     }
@@ -400,9 +424,9 @@ class HTMLAnimElement extends HTMLElement
 
     #clearFrames()
     {
-        while(this.firstChild)
+        while(this.#shadow.firstChild)
         {
-            this.removeChild(this.lastChild);
+            this.#shadow.removeChild(this.#shadow.lastChild);
         }
     }
 
@@ -422,4 +446,4 @@ class HTMLAnimElement extends HTMLElement
     
 
 }
-customElements.define('frame-anim', HTMLAnimElement);
+customElements.define('frame-anim', HTMLFrameAnimElement);

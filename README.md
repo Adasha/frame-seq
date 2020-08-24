@@ -1,7 +1,7 @@
-# anim-element
+# frame-anim
 Custom HTML element to animate nested images. Very early alpha.
 
-To use, embed JS file and use the \<anim-element\> tag name.
+To use, embed JS file and use the \<frame-anim\> tag name.
 
 ## Current features:
 * playback of any nested elements in sequence
@@ -16,5 +16,5 @@ To use, embed JS file and use the \<anim-element\> tag name.
 - buffering
 - preloading
 - loading image sequences
-- shadow DOM?
+
 
