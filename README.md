@@ -43,24 +43,24 @@ To use, embed JS file in `dist` and add the \<frame-anim\> element to your HTML.
 
 ### Attributes
 
-`fps` - Playback speed. Default 12. (frames-per-second).
-`autoplay` - Boolean: Begin playback as soon as element is rendered.
-`reverse` - Boolean: Playback is in opposite direction.
-`pingpong` - Boolean: Doesn't do anything yet.
-`loop` - Boolean: Playback automatically loops (regardless of direction).
-`width` - Doesn't do anything yet.
-`height` - Doesn't do anything yet.
+- `fps` - Playback speed. Default 12. (frames-per-second).
+- `autoplay` - Boolean: Begin playback as soon as element is rendered.
+- `reverse` - Boolean: Playback is in opposite direction.
+- `pingpong` - Boolean: Doesn't do anything yet.
+- `loop` - Boolean: Playback automatically loops (regardless of direction).
+- `width` - Doesn't do anything yet.
+- `height` - Doesn't do anything yet.
 
 
 ### Properties
 
 All attributes are also expressed as properties. Additional properties are:
 
-`currentFrame` - The current playhead position.
-`totalFrames` - The total number of frames in the animation (read-only).
-`duration` - The total running time of the animation, based on the current FPS (read-only).
-`playing` - Boolean: Whether the animation is currently playing (read-only).
-`paused` - Boolean: Whether the animation is currently paused (read-only).
+- `currentFrame` - The current playhead position.
+- `totalFrames` - The total number of frames in the animation (read-only).
+- `duration` - The total running time of the animation, based on the current FPS (read-only).
+- `playing` - Boolean: Whether the animation is currently playing (read-only).
+- `paused` - Boolean: Whether the animation is currently paused (read-only).
 
 
 
@@ -68,12 +68,12 @@ All attributes are also expressed as properties. Additional properties are:
 
 These methods will almost certainly be thinned out in a future version.
 
-`play()`
-`pause()`
-`resume()`
-`stop()`
-`gotoAndPlay(frame)`
-`gotoAndResume(frame)`
-`nextFrame()`
-`prevFrame()`
+- `play()`
+- `pause()`
+- `resume()`
+- `stop()`
+- `gotoAndPlay(frame)`
+- `gotoAndResume(frame)`
+- `nextFrame()`
+- `prevFrame()`
 
