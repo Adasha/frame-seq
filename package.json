@@ -31,6 +31,15 @@
 	"directories": {
 		"test": "tests"
 	},
+	"homepage": "http://lab.adasha.com/frame-anim",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Adasha/frame-anim"
+	},
+	"bugs": {
+		"url": "https://github.com/Adasha/frame-anim/issues",
+		"email": "adasha76@outlook.com"
+	},
   "scripts": {
     "build": "babel src -d dist",
     "test": "echo \"Error: no test specified\" && exit 1"
