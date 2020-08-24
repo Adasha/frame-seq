@@ -53,6 +53,7 @@ class HTMLFrameAnimElement extends HTMLElement
             this.#shadow.appendChild(this.removeChild(this.children[0]));
         }
        
+        this.#clearFrames();
 
         this.redraw = this.redraw.bind(this);
     }

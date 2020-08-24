@@ -223,6 +223,8 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
       _classPrivateFieldGet(_assertThisInitialized(_this), _shadow).appendChild(_this.removeChild(_this.children[0]));
     }
 
+    _classPrivateMethodGet(_assertThisInitialized(_this), _clearFrames, _clearFrames2).call(_assertThisInitialized(_this));
+
     _this.redraw = _this.redraw.bind(_assertThisInitialized(_this));
     return _this;
   } // PROPERTIES
