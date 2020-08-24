@@ -1,9 +1,9 @@
-# frame-anim
+# frame-seq
 Custom HTML element to animate nested images.
 
 Early alpha. Preloading not implemented yet so it will stutter through first playthrough.
 
-Not a lot of demo stuff yet, but there is my [basic test suite](http://lab.adasha.com/frame-anim).
+Not a lot of demo stuff yet, but there is my [basic test suite](http://lab.adasha.com/frame-seq).
 
 
 ## Features
@@ -33,11 +33,11 @@ Not a lot of demo stuff yet, but there is my [basic test suite](http://lab.adash
 
 ## Usage
 
-To use, embed JS file in `dist` and add the `<frame-anim>` element to your HTML. Any elements nested inside will be played back in order of the HTML.
+To use, embed JS file in `dist` and add the `<frame-seq>` element to your HTML. Any elements nested inside will be played back in order of the HTML.
 
 
 ```HTML
-<frame-anim>
+<frame-seq>
     <img src="imgseq01.jpg" ... >
     <img src="imgseq02.jpg" ... >
     <img src="imgseq03.jpg" ... >
@@ -48,7 +48,7 @@ To use, embed JS file in `dist` and add the `<frame-anim>` element to your HTML.
     <img src="imgseq08.jpg" ... >
     <img src="imgseq09.jpg" ... >
     <img src="imgseq10.jpg" ... >
-</frame-anim>
+</frame-seq>
 ```
 
 
