@@ -3,6 +3,8 @@ Custom HTML element to animate nested images.
 
 Early alpha. Preloading not implemented yet so it will stutter through first playthrough.
 
+Not a lot of demo stuff yet, but there is my [basic test suite](http://lab.adasha.com/frame-anim).
+
 
 ## Features
 

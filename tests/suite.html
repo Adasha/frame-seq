@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>anim-element test suite</title>
+        <title>frame-anim test suite</title>
         <meta charset="utf-8">
     </head>
     <body>
@@ -36,6 +36,8 @@
                 <label for="frame-scrubber">Frame:</label>
                 <input type="range" min="1" id="frame-scrubber">
                 <span id="frame-counter">&nbsp;</span>
+                <input type="number" min="0" max="60" step="1" id="fps-value">
+                <label for="fps-value">FPS</label>
                 <br>
                 <input type="checkbox" id="loop-check"><label for="loop-check">Loop</label>
                 <input type="checkbox" id="reverse-check"><label for="reverse-check">Reverse</label>
@@ -57,7 +59,8 @@
                 stopButton = document.getElementById('stop-button');
 
             let frameScrubber = document.getElementById('frame-scrubber'),
-                frameCounter = document.getElementById('frame-counter');
+                frameCounter = document.getElementById('frame-counter'),
+                fpsValue = document.getElementById('fps-value');
 
             let loopCheck = document.getElementById('loop-check'),
                 reverseCheck = document.getElementById('reverse-check'),
@@ -65,6 +68,7 @@
             
             
             frameScrubber.max = anim.totalFrames;
+            fpsValue.value = anim.fps;
             loopCheck.checked = anim.loop;
             reverseCheck.checked = anim.reverse;
             pingpongCheck.checked = anim.pingpong;
@@ -73,7 +77,7 @@
 
             anim.addEventListener('enterFrame', () => {
                 frameScrubber.value = anim.currentFrame;
-                frameCounter.innerHTML = anim.currentFrame + '/' + anim.totalFrames + ' @' + anim.fps + 'fps';
+                frameCounter.innerHTML = anim.currentFrame + '/' + anim.totalFrames + ' @';
             });
             anim.addEventListener('stateChanged', () => {
                 if(anim.paused)
@@ -84,6 +88,7 @@
                 {
                     pauseButton.style = 'background-color: inherit';
                 }
+                fpsValue.value = anim.fps;
                 reverseCheck.checked = anim.reverse;
                 console.log('state changed');
             });
@@ -123,6 +128,9 @@
                 anim.stop();
             });
 
+            fpsValue.addEventListener('change', () => {
+                anim.fps = fpsValue.value;
+            });
             
             loopCheck.addEventListener('change', () => {
                 anim.loop = loopCheck.checked;
