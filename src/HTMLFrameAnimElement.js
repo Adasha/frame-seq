@@ -49,7 +49,8 @@ class HTMLFrameAnimElement extends HTMLElement
 
         while(this.children.length>0)
         {
-            this.#frames.push(this.removeChild(this.children[0]));
+            // this.#frames.push(this.removeChild(this.children[0]));
+            this.#shadow.appendChild(this.removeChild(this.children[0]));
         }
        
 
@@ -92,7 +93,8 @@ class HTMLFrameAnimElement extends HTMLElement
 
     get totalFrames()
     {
-        return this.#frames.length;
+        // return this.#frames.length;
+        return this.#shadow.children.length;
     }
 
 
@@ -453,7 +455,8 @@ class HTMLFrameAnimElement extends HTMLElement
 
         this.dispatchEvent(new Event('enterFrame'));
 
-        this.#shadow.appendChild(this.#frames[this.currentFrame-1]);
+        // this.#shadow.appendChild(this.#frames[this.currentFrame-1]);
+        this.#shadow.children[this.currentFrame-1].style.display = 'block';
 
         this.#cleanUp();
     }
@@ -461,9 +464,13 @@ class HTMLFrameAnimElement extends HTMLElement
 
     #clearFrames()
     {
-        while(this.#shadow.firstChild)
+        // while(this.#shadow.firstChild)
+        // {
+        //     this.#shadow.removeChild(this.#shadow.lastChild);
+        // }
+        for(let i=0; i<this.#shadow.children.length; i++)
         {
-            this.#shadow.removeChild(this.#shadow.lastChild);
+            this.#shadow.children[i].style.display = 'none';
         }
     }
 

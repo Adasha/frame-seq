@@ -219,7 +219,8 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
     }));
 
     while (_this.children.length > 0) {
-      _classPrivateFieldGet(_assertThisInitialized(_this), _frames).push(_this.removeChild(_this.children[0]));
+      // this.#frames.push(this.removeChild(this.children[0]));
+      _classPrivateFieldGet(_assertThisInitialized(_this), _shadow).appendChild(_this.removeChild(_this.children[0]));
     }
 
     _this.redraw = _this.redraw.bind(_assertThisInitialized(_this));
@@ -386,9 +387,9 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
     value: function redraw(timestamp) {
       _classPrivateMethodGet(this, _clearFrames, _clearFrames2).call(this);
 
-      this.dispatchEvent(new Event('enterFrame'));
+      this.dispatchEvent(new Event('enterFrame')); // this.#shadow.appendChild(this.#frames[this.currentFrame-1]);
 
-      _classPrivateFieldGet(this, _shadow).appendChild(_classPrivateFieldGet(this, _frames)[this.currentFrame - 1]);
+      _classPrivateFieldGet(this, _shadow).children[this.currentFrame - 1].style.display = 'block';
 
       _classPrivateMethodGet(this, _cleanUp, _cleanUp2).call(this);
     }
@@ -419,7 +420,8 @@ var HTMLFrameAnimElement = /*#__PURE__*/function (_HTMLElement) {
   }, {
     key: "totalFrames",
     get: function get() {
-      return _classPrivateFieldGet(this, _frames).length;
+      // return this.#frames.length;
+      return _classPrivateFieldGet(this, _shadow).children.length;
     }
   }, {
     key: "fps",
@@ -572,8 +574,12 @@ var _update2 = function _update2() {
 };
 
 var _clearFrames2 = function _clearFrames2() {
-  while (_classPrivateFieldGet(this, _shadow).firstChild) {
-    _classPrivateFieldGet(this, _shadow).removeChild(_classPrivateFieldGet(this, _shadow).lastChild);
+  // while(this.#shadow.firstChild)
+  // {
+  //     this.#shadow.removeChild(this.#shadow.lastChild);
+  // }
+  for (var i = 0; i < _classPrivateFieldGet(this, _shadow).children.length; i++) {
+    _classPrivateFieldGet(this, _shadow).children[i].style.display = 'none';
   }
 };
 
