@@ -20,7 +20,7 @@ function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new 
 
 function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
 
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
 function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
 
@@ -30,53 +30,59 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return fn; }
 
-function _classPrivateFieldGet(receiver, privateMap) { var descriptor = privateMap.get(receiver); if (!descriptor) { throw new TypeError("attempted to get private field on non-instance"); } if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
 
-function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = privateMap.get(receiver); if (!descriptor) { throw new TypeError("attempted to set private field on non-instance"); } if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } return value; }
+function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
 
-var _DEFAULT_FPS = new WeakMap();
+function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
 
-var _currentFrame = new WeakMap();
+function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
 
-var _totalFrames = new WeakMap();
+function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
 
-var _fps = new WeakMap();
+var _DEFAULT_FPS = /*#__PURE__*/new WeakMap();
 
-var _frameTimer = new WeakMap();
+var _currentFrame = /*#__PURE__*/new WeakMap();
 
-var _duration = new WeakMap();
+var _totalFrames = /*#__PURE__*/new WeakMap();
 
-var _width = new WeakMap();
+var _fps = /*#__PURE__*/new WeakMap();
 
-var _height = new WeakMap();
+var _frameTimer = /*#__PURE__*/new WeakMap();
 
-var _playing = new WeakMap();
+var _duration = /*#__PURE__*/new WeakMap();
 
-var _paused = new WeakMap();
+var _width = /*#__PURE__*/new WeakMap();
 
-var _stopped = new WeakMap();
+var _height = /*#__PURE__*/new WeakMap();
 
-var _reverse = new WeakMap();
+var _playing = /*#__PURE__*/new WeakMap();
 
-var _loop = new WeakMap();
+var _paused = /*#__PURE__*/new WeakMap();
 
-var _pingpong = new WeakMap();
+var _stopped = /*#__PURE__*/new WeakMap();
 
-var _autoplay = new WeakMap();
+var _reverse = /*#__PURE__*/new WeakMap();
 
-var _shadow = new WeakMap();
+var _loop = /*#__PURE__*/new WeakMap();
 
-var _startTimer = new WeakSet();
+var _pingpong = /*#__PURE__*/new WeakMap();
 
-var _clearTimer = new WeakSet();
+var _autoplay = /*#__PURE__*/new WeakMap();
 
-var _update = new WeakSet();
+var _shadow = /*#__PURE__*/new WeakMap();
 
-var _clearFrames = new WeakSet();
+var _startTimer = /*#__PURE__*/new WeakSet();
 
-var _clearStates = new WeakSet();
+var _clearTimer = /*#__PURE__*/new WeakSet();
 
-var _cleanUp = new WeakSet();
+var _update = /*#__PURE__*/new WeakSet();
+
+var _clearFrames = /*#__PURE__*/new WeakSet();
+
+var _clearStates = /*#__PURE__*/new WeakSet();
+
+var _cleanUp = /*#__PURE__*/new WeakSet();
 
 /**
  * Class representing a HTMLFrameSeqElement.
@@ -90,21 +96,12 @@ var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
 
   var _super = _createSuper(HTMLFrameSeqElement);
 
-  _createClass(HTMLFrameSeqElement, null, [{
-    key: "observedAttributes",
-    // #frames = [];
-    get: function get() {
-      return ['autoplay', 'firstframe', 'fps', 'height', 'loop', 'pingpong', 'preload', 'reverse', 'src', 'width'];
-    }
-    /**
-     * Create a HTMLFrameSeqElement instance.
-     * @constructor
-     * @fires HTMLFrameSeqElement#stateChanged
-     * @fires HTMLFrameSeqElement#enterFrame
-     */
-
-  }]);
-
+  /**
+   * Create a HTMLFrameSeqElement instance.
+   * @constructor
+   * @fires HTMLFrameSeqElement#stateChanged
+   * @fires HTMLFrameSeqElement#enterFrame
+   */
   function HTMLFrameSeqElement() {
     var _this;
 
@@ -225,12 +222,146 @@ var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
 
 
   _createClass(HTMLFrameSeqElement, [{
-    key: "play",
-    //METHODS
+    key: "currentFrame",
+    get: function get() {
+      return _classPrivateFieldGet(this, _currentFrame);
+    },
+    set: function set(num) {
+      if (isNaN(num)) {
+        throw new TypeError('Frame number must be a number.');
+      }
+
+      if (Math.floor(num) !== num) {
+        console.log('WARN: frame number must be an integer. Fraction discarded.');
+        num = Math.floor(num);
+      }
+
+      if (num < 1 || num > this.totalFrames) {
+        console.log('WARN: frame number out of range. Closest value used.');
+        num = Math.min(Math.max(1, num), this.totalFrames);
+      }
+
+      _classPrivateFieldSet(this, _currentFrame, num);
+
+      window.requestAnimationFrame(this.redraw);
+    }
+  }, {
+    key: "totalFrames",
+    get: function get() {
+      // return this.#frames.length;
+      return _classPrivateFieldGet(this, _shadow).children.length;
+    }
+  }, {
+    key: "fps",
+    get: function get() {
+      return this.getAttribute('fps');
+    },
+    set: function set(value) {
+      this.setAttribute('fps', value);
+    }
+  }, {
+    key: "duration",
+    get: function get() {
+      return this.totalFrames / this.fps;
+    }
+  }, {
+    key: "autoplay",
+    get: function get() {
+      return this.hasAttribute('autoplay');
+    },
+    set: function set(bool) {
+      if (!!bool) {
+        this.setAttribute('autoplay', '');
+      } else {
+        this.removeAttribute('autoplay');
+      }
+    }
+  }, {
+    key: "loop",
+    get: function get() {
+      return this.hasAttribute('loop');
+    },
+    set: function set(bool) {
+      if (!!bool) {
+        this.setAttribute('loop', '');
+      } else {
+        this.removeAttribute('loop');
+      }
+    }
+  }, {
+    key: "reverse",
+    get: function get() {
+      return this.hasAttribute('reverse');
+    },
+    set: function set(bool) {
+      if (!!bool) {
+        this.setAttribute('reverse', '');
+      } else {
+        this.removeAttribute('reverse');
+      }
+    }
+  }, {
+    key: "pingpong",
+    get: function get() {
+      return this.hasAttribute('pingpong');
+    },
+    set: function set(bool) {
+      if (!!bool) {
+        this.setAttribute('pingpong', '');
+      } else {
+        this.removeAttribute('pingpong');
+      }
+    }
+  }, {
+    key: "preload",
+    get: function get() {
+      return this.hasAttribute('preload');
+    },
+    set: function set(bool) {
+      if (!!bool) {
+        this.setAttribute('preload', '');
+      } else {
+        this.removeAttribute('preload');
+      }
+    }
+  }, {
+    key: "width",
+    get: function get() {
+      return this.getAttribute('width');
+    },
+    set: function set(value) {
+      this.setAttribute('width', value);
+    }
+  }, {
+    key: "height",
+    get: function get() {
+      return this.getAttribute('height');
+    },
+    set: function set(value) {
+      this.setAttribute('height', value);
+    }
+  }, {
+    key: "playing",
+    get: function get() {
+      return _classPrivateFieldGet(this, _playing);
+    }
+  }, {
+    key: "paused",
+    get: function get() {
+      return _classPrivateFieldGet(this, _paused);
+    }
+  }, {
+    key: "stopped",
+    get: function get() {
+      return _classPrivateFieldGet(this, _stopped);
+    } //METHODS
 
     /**
      * Begin playback from the first frame, or the last frame if 'reverse' is true.
      */
+
+  }, {
+    key: "play",
     value: function play() {
       this.currentFrame = this.reverse ? this.totalFrames : 1;
 
@@ -390,146 +521,18 @@ var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
 
       _classPrivateMethodGet(this, _cleanUp, _cleanUp2).call(this);
     }
-  }, {
-    key: "currentFrame",
-    get: function get() {
-      return _classPrivateFieldGet(this, _currentFrame);
-    },
-    set: function set(num) {
-      if (isNaN(num)) {
-        throw new TypeError('Frame number must be a number.');
-      }
-
-      if (Math.floor(num) !== num) {
-        console.log('WARN: frame number must be an integer. Fraction discarded.');
-        num = Math.floor(num);
-      }
-
-      if (num < 1 || num > this.totalFrames) {
-        console.log('WARN: frame number out of range. Closest value used.');
-        num = Math.min(Math.max(1, num), this.totalFrames);
-      }
-
-      _classPrivateFieldSet(this, _currentFrame, num);
-
-      window.requestAnimationFrame(this.redraw);
-    }
-  }, {
-    key: "totalFrames",
-    get: function get() {
-      // return this.#frames.length;
-      return _classPrivateFieldGet(this, _shadow).children.length;
-    }
-  }, {
-    key: "fps",
-    get: function get() {
-      return this.getAttribute('fps');
-    },
-    set: function set(value) {
-      this.setAttribute('fps', value);
-    }
-  }, {
-    key: "duration",
-    get: function get() {
-      return this.totalFrames / this.fps;
-    }
-  }, {
-    key: "autoplay",
-    get: function get() {
-      return this.hasAttribute('autoplay');
-    },
-    set: function set(bool) {
-      if (!!bool) {
-        this.setAttribute('autoplay', '');
-      } else {
-        this.removeAttribute('autoplay');
-      }
-    }
-  }, {
-    key: "loop",
-    get: function get() {
-      return this.hasAttribute('loop');
-    },
-    set: function set(bool) {
-      if (!!bool) {
-        this.setAttribute('loop', '');
-      } else {
-        this.removeAttribute('loop');
-      }
-    }
-  }, {
-    key: "reverse",
-    get: function get() {
-      return this.hasAttribute('reverse');
-    },
-    set: function set(bool) {
-      if (!!bool) {
-        this.setAttribute('reverse', '');
-      } else {
-        this.removeAttribute('reverse');
-      }
-    }
-  }, {
-    key: "pingpong",
-    get: function get() {
-      return this.hasAttribute('pingpong');
-    },
-    set: function set(bool) {
-      if (!!bool) {
-        this.setAttribute('pingpong', '');
-      } else {
-        this.removeAttribute('pingpong');
-      }
-    }
-  }, {
-    key: "preload",
-    get: function get() {
-      return this.hasAttribute('preload');
-    },
-    set: function set(bool) {
-      if (!!bool) {
-        this.setAttribute('preload', '');
-      } else {
-        this.removeAttribute('preload');
-      }
-    }
-  }, {
-    key: "width",
-    get: function get() {
-      return this.getAttribute('width');
-    },
-    set: function set(value) {
-      this.setAttribute('width', value);
-    }
-  }, {
-    key: "height",
-    get: function get() {
-      return this.getAttribute('height');
-    },
-    set: function set(value) {
-      this.setAttribute('height', value);
-    }
-  }, {
-    key: "playing",
-    get: function get() {
-      return _classPrivateFieldGet(this, _playing);
-    }
-  }, {
-    key: "paused",
-    get: function get() {
-      return _classPrivateFieldGet(this, _paused);
-    }
-  }, {
-    key: "stopped",
-    get: function get() {
-      return _classPrivateFieldGet(this, _stopped);
+  }], [{
+    key: "observedAttributes",
+    get: // #frames = [];
+    function get() {
+      return ['autoplay', 'firstframe', 'fps', 'height', 'loop', 'pingpong', 'preload', 'reverse', 'src', 'width'];
     }
   }]);
 
   return HTMLFrameSeqElement;
 }( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
 
-var _startTimer2 = function _startTimer2() {
+function _startTimer2() {
   var _this2 = this;
 
   _classPrivateMethodGet(this, _clearTimer, _clearTimer2).call(this);
@@ -540,17 +543,17 @@ var _startTimer2 = function _startTimer2() {
   _classPrivateFieldSet(this, _frameTimer, window.setInterval(function () {
     return _classPrivateMethodGet(_this2, _update, _update2).call(_this2);
   }, ms));
-};
+}
 
-var _clearTimer2 = function _clearTimer2() {
+function _clearTimer2() {
   if (_classPrivateFieldGet(this, _frameTimer)) {
     window.clearInterval(_classPrivateFieldGet(this, _frameTimer));
 
     _classPrivateFieldSet(this, _frameTimer, null);
   }
-};
+}
 
-var _update2 = function _update2() {
+function _update2() {
   if (this.reverse) {
     if (this.currentFrame > 1) {
       this.currentFrame--;
@@ -568,9 +571,9 @@ var _update2 = function _update2() {
       this.pause();
     }
   }
-};
+}
 
-var _clearFrames2 = function _clearFrames2() {
+function _clearFrames2() {
   // while(this.#shadow.firstChild)
   // {
   //     this.#shadow.removeChild(this.#shadow.lastChild);
@@ -578,16 +581,16 @@ var _clearFrames2 = function _clearFrames2() {
   for (var i = 0; i < _classPrivateFieldGet(this, _shadow).children.length; i++) {
     _classPrivateFieldGet(this, _shadow).children[i].style.display = 'none';
   }
-};
+}
 
-var _clearStates2 = function _clearStates2() {
+function _clearStates2() {
   _classPrivateFieldSet(this, _playing, false);
 
   _classPrivateFieldSet(this, _paused, false);
 
   _classPrivateFieldSet(this, _stopped, false);
-};
+}
 
-var _cleanUp2 = function _cleanUp2() {};
+function _cleanUp2() {}
 
 customElements.define('frame-seq', HTMLFrameSeqElement);
