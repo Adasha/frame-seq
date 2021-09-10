@@ -16,14 +16,14 @@ class HTMLFrameSeqElement extends HTMLElement
     #fps;
     #frameTimer;
     #duration;
-    #width = 0;
+    #width  = 0;
     #height = 0;
 
-    #playing = false;
-    #paused = false;
-    #stopped = false;
-    #reverse = false;
-    #loop = false;
+    #playing  = false;
+    #paused   = false;
+    #stopped  = false;
+    #reverse  = false;
+    #loop     = false;
     #pingpong = false;
     #autoplay = false;
 
