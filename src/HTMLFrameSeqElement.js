@@ -266,7 +266,7 @@ class HTMLFrameSeqElement extends HTMLElement
         this.#startTimer();
         this.#clearStates();
         this.#playing = true;
-        this.dispatchEvent(new Event('stateChanged'));
+        this.dispatchEvent(new PlaybackEvent(PlaybackEvent.STATE_CHANGED));
     }
 
     /**
@@ -277,7 +277,7 @@ class HTMLFrameSeqElement extends HTMLElement
         this.#clearTimer();
         this.#clearStates();
         this.#paused = true;
-        this.dispatchEvent(new Event('stateChanged'));
+        this.dispatchEvent(new PlaybackEvent(PlaybackEvent.STATE_CHANGED));
     }
 
     /**
@@ -288,7 +288,7 @@ class HTMLFrameSeqElement extends HTMLElement
         this.#startTimer();
         this.#clearStates();
         this.#playing = true;
-        this.dispatchEvent(new Event('stateChanged'));
+        this.dispatchEvent(new PlaybackEvent(PlaybackEvent.STATE_CHANGED));
     }
 
     /**
@@ -300,7 +300,7 @@ class HTMLFrameSeqElement extends HTMLElement
         this.currentFrame = this.reverse ? this.totalFrames : 1;
         this.#clearStates();
         this.#stopped = true;
-        this.dispatchEvent(new Event('stateChanged'));
+        this.dispatchEvent(new PlaybackEvent(PlaybackEvent.STATE_CHANGED));
     }
 
 
@@ -391,7 +391,7 @@ class HTMLFrameSeqElement extends HTMLElement
             default :
             throw new Error(`${name} is not a recognised attribute.`);
         }
-        this.dispatchEvent(new Event('stateChanged'));
+        this.dispatchEvent(new PlaybackEvent(PlaybackEvent.STATE_CHANGED));
     }
 
 
@@ -493,3 +493,26 @@ class HTMLFrameSeqElement extends HTMLElement
 
 }
 customElements.define('frame-seq', HTMLFrameSeqElement);
+
+
+
+
+
+
+
+
+class PlaybackEvent extends Event
+{
+    static PLAYING = "playbackStarted";
+    static PAUSED = "playbackPaused";
+    static STOPPED = "playbackStopped";
+
+    static STATE_CHANGED = "stateChanged";
+
+
+
+    constructor(...args)
+    {
+        super(...args);
+    }
+}

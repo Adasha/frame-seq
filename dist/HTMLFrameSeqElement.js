@@ -2,6 +2,8 @@
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -12,7 +14,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
@@ -27,6 +29,12 @@ function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[nat
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _classPrivateMethodInitSpec(obj, privateSet) { _checkPrivateRedeclaration(obj, privateSet); privateSet.add(obj); }
+
+function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
+
+function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
 
 function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return fn; }
 
@@ -113,94 +121,94 @@ var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
 
     _this = _super.call.apply(_super, [this].concat(args));
 
-    _cleanUp.add(_assertThisInitialized(_this));
+    _classPrivateMethodInitSpec(_assertThisInitialized(_this), _cleanUp);
 
-    _clearStates.add(_assertThisInitialized(_this));
+    _classPrivateMethodInitSpec(_assertThisInitialized(_this), _clearStates);
 
-    _clearFrames.add(_assertThisInitialized(_this));
+    _classPrivateMethodInitSpec(_assertThisInitialized(_this), _clearFrames);
 
-    _update.add(_assertThisInitialized(_this));
+    _classPrivateMethodInitSpec(_assertThisInitialized(_this), _update);
 
-    _clearTimer.add(_assertThisInitialized(_this));
+    _classPrivateMethodInitSpec(_assertThisInitialized(_this), _clearTimer);
 
-    _startTimer.add(_assertThisInitialized(_this));
+    _classPrivateMethodInitSpec(_assertThisInitialized(_this), _startTimer);
 
-    _DEFAULT_FPS.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _DEFAULT_FPS, {
       writable: true,
       value: 15
     });
 
-    _currentFrame.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _currentFrame, {
       writable: true,
       value: 1
     });
 
-    _totalFrames.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _totalFrames, {
       writable: true,
       value: void 0
     });
 
-    _fps.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _fps, {
       writable: true,
       value: void 0
     });
 
-    _frameTimer.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _frameTimer, {
       writable: true,
       value: void 0
     });
 
-    _duration.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _duration, {
       writable: true,
       value: void 0
     });
 
-    _width.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _width, {
       writable: true,
       value: 0
     });
 
-    _height.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _height, {
       writable: true,
       value: 0
     });
 
-    _playing.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _playing, {
       writable: true,
       value: false
     });
 
-    _paused.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _paused, {
       writable: true,
       value: false
     });
 
-    _stopped.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _stopped, {
       writable: true,
       value: false
     });
 
-    _reverse.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _reverse, {
       writable: true,
       value: false
     });
 
-    _loop.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _loop, {
       writable: true,
       value: false
     });
 
-    _pingpong.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _pingpong, {
       writable: true,
       value: false
     });
 
-    _autoplay.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _autoplay, {
       writable: true,
       value: false
     });
 
-    _shadow.set(_assertThisInitialized(_this), {
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _shadow, {
       writable: true,
       value: void 0
     });
@@ -371,7 +379,7 @@ var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
 
       _classPrivateFieldSet(this, _playing, true);
 
-      this.dispatchEvent(new Event('stateChanged'));
+      this.dispatchEvent(new PlaybackEvent(PlaybackEvent.STATE_CHANGED));
     }
     /**
      * Pause playback at the current frame.
@@ -386,7 +394,7 @@ var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
 
       _classPrivateFieldSet(this, _paused, true);
 
-      this.dispatchEvent(new Event('stateChanged'));
+      this.dispatchEvent(new PlaybackEvent(PlaybackEvent.STATE_CHANGED));
     }
     /**
      * Resume playback at the current frame.
@@ -401,7 +409,7 @@ var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
 
       _classPrivateFieldSet(this, _playing, true);
 
-      this.dispatchEvent(new Event('stateChanged'));
+      this.dispatchEvent(new PlaybackEvent(PlaybackEvent.STATE_CHANGED));
     }
     /**
      * Stop playback and return to the first frame, or the last frame if 'reverse' is true.
@@ -418,7 +426,7 @@ var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
 
       _classPrivateFieldSet(this, _stopped, true);
 
-      this.dispatchEvent(new Event('stateChanged'));
+      this.dispatchEvent(new PlaybackEvent(PlaybackEvent.STATE_CHANGED));
     }
     /**
      * Go to a specific frame and resume playback from there.
@@ -507,7 +515,7 @@ var HTMLFrameSeqElement = /*#__PURE__*/function (_HTMLElement) {
           throw new Error("".concat(name, " is not a recognised attribute."));
       }
 
-      this.dispatchEvent(new Event('stateChanged'));
+      this.dispatchEvent(new PlaybackEvent(PlaybackEvent.STATE_CHANGED));
     }
   }, {
     key: "redraw",
@@ -594,3 +602,29 @@ function _clearStates2() {
 function _cleanUp2() {}
 
 customElements.define('frame-seq', HTMLFrameSeqElement);
+
+var PlaybackEvent = /*#__PURE__*/function (_Event) {
+  _inherits(PlaybackEvent, _Event);
+
+  var _super2 = _createSuper(PlaybackEvent);
+
+  function PlaybackEvent() {
+    _classCallCheck(this, PlaybackEvent);
+
+    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    return _super2.call.apply(_super2, [this].concat(args));
+  }
+
+  return PlaybackEvent;
+}( /*#__PURE__*/_wrapNativeSuper(Event));
+
+_defineProperty(PlaybackEvent, "PLAYING", "playbackStarted");
+
+_defineProperty(PlaybackEvent, "PAUSED", "playbackPaused");
+
+_defineProperty(PlaybackEvent, "STOPPED", "playbackStopped");
+
+_defineProperty(PlaybackEvent, "STATE_CHANGED", "stateChanged");
