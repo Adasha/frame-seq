@@ -31,12 +31,11 @@
   "custom-element",
   "component"
  ],
- "dependencies": {},
  "devDependencies": {
   "@babel/cli": "^7.17.6",
   "@babel/core": "^7.17.9",
   "@babel/preset-env": "^7.16.11",
-  "jsdoc": "^3.6.10"
+  "jsdoc": "^4.0.2"
  },
  "directories": {
   "test": "tests"
